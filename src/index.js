@@ -3,6 +3,8 @@ const express = require('express');
 const LcashRoutes = require('./routes');
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 app.use('/Lcash',LcashRoutes);
 
 app.listen(server_config.PORT, ()=>{

@@ -1,18 +1,16 @@
-const SEAT_TYPE = {
-    BUSINESS: 'business',
-    ECONOMY: 'economy',
-    PREMIUM_ECONOMY: 'premium-economy',
-    FIRST_CLASS: 'first-class'
+const ACC_TYPE = {
+    PERSONAL: 'personal',
+    MARCHENT: 'marchent',
+    SUPERADMIN: 'superadmin',
 }
 
-const BOOKING_STATUS = {
-    BOOKED: 'booked',
-    CANCELLED: 'cancelled',
-    INITIATED: 'initiated',
-    PENDING: 'pending'
+const ACC_STATUS = {
+    ACTIVE: 'active',
+    BLOCKED: 'blocked',
+    PENDING: 'pending',
 }
 
 module.exports = {
-    SEAT_TYPE,
-    BOOKING_STATUS
+    ACC_TYPE,
+    ACC_STATUS,
 }
