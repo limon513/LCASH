@@ -10,7 +10,13 @@ const ACC_STATUS = {
     PENDING: 'pending',
 }
 
+const SUSPICION = {
+    LOGIN: 'login',
+    PIN: 'pin',
+}
+
 module.exports = {
     ACC_TYPE,
     ACC_STATUS,
+    SUSPICION,
 }
