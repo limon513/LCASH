@@ -25,6 +25,28 @@ async function create(data){
     }
 }
 
+async function signIn(data){
+    try {
+        const chechAccountNumber = await AccountRepo.getByAccount(data.accNumber);
+        if(!chechAccountNumber){
+            throw new AppError(['Wrong Account Number!'],StatusCodes.BAD_REQUEST);
+        }
+        if(!Utility.checkPIN(data.PIN,chechAccountNumber.PIN)){
+            throw new AppError(['Incorrect PIN!'],StatusCodes.BAD_REQUEST);
+        }
+        const jwt = Utility.createToken({number:data.accNumber});
+        const response = {
+            accNumber:data.accNumber,
+            token:jwt,
+        }
+        return response;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Internal Server Error,Please Try again Somethime'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     create,
+    signIn,
 }

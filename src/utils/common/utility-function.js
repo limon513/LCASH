@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const serverConfig = require('../../config/server-config');
+const jwt = require('jsonwebtoken');
+const AppError = require('../errors/app-error');
+const { StatusCodes } = require('http-status-codes');
 
 function hashThePassword(password){
     const hashedPassword = bcrypt.hashSync(password,+serverConfig.SALTROUND);
@@ -19,8 +22,27 @@ function validatePIN(PIN){
     else return true;
 }
 
+function checkPIN(plainPIN,encryptPIN){
+    try {
+        return bcrypt.compareSync(plainPIN,encryptPIN);
+    } catch (error) {
+        throw new AppError(['Server side problem,please retry sometime later.'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+function createToken(payload){
+    try {
+        return jwt.sign(payload,serverConfig.JWTSECRET,{expiresIn:serverConfig.JWTEXPIRY});
+    } catch (error) {
+        console.log(error);
+        throw new AppError(['Server side problem,please retry sometime later.'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     hashThePassword,
     validatePhoneNumber,
     validatePIN,
+    checkPIN,
+    createToken,
 }

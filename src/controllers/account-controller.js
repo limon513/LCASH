@@ -4,7 +4,7 @@ const {StatusCodes} = require('http-status-codes')
 
 async function create(req,res){
     try {
-        console.log('inside controller');
+        // console.log('inside controller');
         const response = await AccountService.create(req.body);
         SuccessResponse.data = response;
         return res.status(StatusCodes.OK).json(SuccessResponse);
@@ -14,6 +14,19 @@ async function create(req,res){
     }
 }
 
+async function singIn(req,res){
+    try {
+        const response = await AccountService.signIn(req.body);
+        SuccessResponse.data = response;
+        return res.status(StatusCodes.ACCEPTED).json(SuccessResponse);
+    } catch (error) {
+        console.log(error);
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     create,
+    singIn,
 }

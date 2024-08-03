@@ -29,6 +29,8 @@ class AccountRepository extends Crud{
         }
     }
 
+    
+
 }
 
 module.exports = AccountRepository;

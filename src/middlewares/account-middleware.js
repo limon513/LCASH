@@ -21,14 +21,29 @@ function userValidate(req,res,next){
     }
     req.body = {
         userName:req.body.userName,
-        accNumber:req.body.accNumber,
-        PIN:req.body.PIN,
+        accNumber:req.body.accNumber.trim(),
+        PIN:req.body.PIN.trim(),
     };
-    req.body.accNumber = req.body.accNumber.trim();
-    req.body.PIN = req.body.PIN.trim();
+    next();
+}
+
+function signInValidate(req,res,next){
+    if(!req.body.accNumber){
+        ErrorResponse.error = new AppError(['Empty Account Number!'],StatusCodes.BAD_REQUEST);
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+    if(!req.body.PIN){
+        ErrorResponse.error = new AppError(['Six degit PIN required!'],StatusCodes.BAD_REQUEST);
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+    req.body = {
+        accNumber:req.body.accNumber.trim(),
+        PIN:req.body.PIN.trim(),
+    };
     next();
 }
 
 module.exports = {
     userValidate,
+    signInValidate,
 }
