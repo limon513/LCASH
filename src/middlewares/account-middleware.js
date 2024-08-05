@@ -1,6 +1,7 @@
-const { StatusCodes } = require("http-status-codes")
-const { ErrorResponse, Utility } = require("../utils/common")
-const AppError = require("../utils/errors/app-error")
+const { StatusCodes } = require("http-status-codes");
+const { ErrorResponse, Utility } = require("../utils/common");
+const AppError = require("../utils/errors/app-error");
+const {SuspicionService} = require('../services');
 
 function userValidate(req,res,next){
     if(!req.body.accNumber){
@@ -42,6 +43,7 @@ function signInValidate(req,res,next){
     };
     next();
 }
+
 
 module.exports = {
     userValidate,

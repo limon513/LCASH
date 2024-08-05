@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false,
     },
     vcode: {
-      type:DataTypes.STRING,
+      type:DataTypes.INTEGER,
     },
     message:{
       type:DataTypes.STRING,

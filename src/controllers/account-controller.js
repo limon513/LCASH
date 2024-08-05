@@ -20,7 +20,6 @@ async function singIn(req,res){
         SuccessResponse.data = response;
         return res.status(StatusCodes.ACCEPTED).json(SuccessResponse);
     } catch (error) {
-        console.log(error);
         ErrorResponse.error = error;
         return res.status(error.statusCode).json(ErrorResponse);
     }

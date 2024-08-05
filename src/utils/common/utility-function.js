@@ -39,10 +39,15 @@ function createToken(payload){
     }
 }
 
+function generateVcode(){
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
 module.exports = {
     hashThePassword,
     validatePhoneNumber,
     validatePIN,
     checkPIN,
     createToken,
+    generateVcode,
 }

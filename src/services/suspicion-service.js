@@ -1,0 +1,70 @@
+const {SuspicionRepository} = require('../repositories');
+const AppError = require('../utils/errors/app-error');
+const {StatusCodes} = require('http-status-codes');
+const serverConfig = require('../config/server-config');
+const {Utility, Enums} = require('../utils/common');
+
+const SuspicionRepo = new SuspicionRepository();
+
+async function create(data){
+    try {
+        const checkForEntry = await SuspicionRepo.getByAccountAndType(data.accNumber,Enums.SUSPICION.LOGIN);
+        if(checkForEntry){
+            if(checkForEntry.attempt >= +serverConfig.ACCEPTLOGINATTEMPT){
+                if(checkForEntry.message){
+                    return {accNumber:checkForEntry.accNumber,message:checkForEntry.message};
+                }
+                const updateSuspicion = await SuspicionRepo.update(data.accNumber,Enums.SUSPICION.LOGIN,{
+                    message: serverConfig.LOGINATTEMPTMESSAGE,
+                    vcode: Utility.generateVcode(),
+                });
+                return {accNumber:updateSuspicion.accNumber,message:updateSuspicion.message};
+            }
+            const incrementData = await checkForEntry.increment({attempt:1});
+            return {accNumber:incrementData.accNumber};
+        }
+        const response = await SuspicionRepo.create(data);
+        return {accNumber:response.accNumber};
+    } catch (error) {
+        console.log(error);
+        if(error instanceof Error) throw error;
+        throw new AppError(['Internal Server Error!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+
+async function clearSuspicion(data){
+    try {
+        const suspicion = await SuspicionRepo.getByAccountAndType(data.accNumber,Enums.SUSPICION.LOGIN);
+        if(!suspicion){
+            throw new AppError(['No need to verify!'],StatusCodes.BAD_REQUEST);
+        }
+        if(suspicion.vcode != data.PIN){
+            throw new AppError(['Verification Code not matching!'],StatusCodes.BAD_REQUEST);
+        }
+        const response = await SuspicionRepo.clearSuspicion(data.accNumber,Enums.SUSPICION.LOGIN);
+        if(!response){
+            throw new AppError(['Verification service unavailable, Please try again later!'],StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Internal Server Error!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function checkForSuspicion(accNumber){
+    try {
+        const suspicion = await SuspicionRepo.getByAccountAndType(accNumber,Enums.SUSPICION.LOGIN);
+        if(suspicion && suspicion.vcode && suspicion.message) return suspicion;
+        return false;
+    } catch (error) {
+        throw new AppError(['Internal Server Error!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+module.exports = {
+    create,
+    clearSuspicion,
+    checkForSuspicion,
+}

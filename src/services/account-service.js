@@ -4,6 +4,8 @@ const {StatusCodes} = require('http-status-codes');
 const bcrypt = require('bcrypt');
 const serverConfig = require('../config/server-config');
 const {Utility} = require('../utils/common');
+const SuspicionService = require('./suspicion-service');
+const {Enums} = require('../utils/common');
 
 const AccountRepo = new AccountRepository();
 
@@ -31,8 +33,17 @@ async function signIn(data){
         if(!chechAccountNumber){
             throw new AppError(['Wrong Account Number!'],StatusCodes.BAD_REQUEST);
         }
+        const checkForSuspicion = await SuspicionService.checkForSuspicion(data.accNumber);
+        if(checkForSuspicion){
+            throw new AppError([checkForSuspicion.message],StatusCodes.UNAUTHORIZED);
+        }
         if(!Utility.checkPIN(data.PIN,chechAccountNumber.PIN)){
-            //TODO: update the Suspicion table on type Login.
+            const suspicionResponse = await SuspicionService.create({
+                accNumber:data.accNumber,
+                type:Enums.SUSPICION.LOGIN});
+            if(suspicionResponse.message){
+                throw new AppError([suspicionResponse.message],StatusCodes.UNAUTHORIZED);
+            }
             throw new AppError(['Incorrect PIN!'],StatusCodes.BAD_REQUEST);
         }
         const jwt = Utility.createToken({number:data.accNumber});
@@ -46,6 +57,8 @@ async function signIn(data){
         throw new AppError(['Internal Server Error,Please Try again Somethime'],StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
+
+
 
 module.exports = {
     create,

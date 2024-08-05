@@ -29,7 +29,7 @@ module.exports = {
         allowNull:false,
       },
       vcode: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       message: {
         type: Sequelize.STRING,
