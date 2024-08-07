@@ -2,8 +2,9 @@
 const {
   Model
 } = require('sequelize');
+const {Enums} = require('../utils/common')
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Request extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,35 +12,23 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasOne(models.Account,{
-        foreignKey:'accNumber',
-        onDelete:'CASCADE',
-        onUpdate:'CASCADE',
-      });
-      this.hasOne(models.Suspicion,{
-        foreignKey:'accNumber',
-        onDelete:'CASCADE',
-        onUpdate:'CASCADE',
-      });
-      this.hasOne(models.Request,{
+      this.belongsTo(models.User,{
         foreignKey:'accNumber',
         onDelete:'CASCADE',
         onUpdate:'CASCADE',
       });
     }
   }
-  User.init({
-    userName: {
-      type:DataTypes.STRING,
-    },
+  Request.init({
     accNumber: {
       type:DataTypes.STRING,
       allowNull:false,
       unique:true,
     },
-    PIN: {
-      type:DataTypes.STRING,
+    accType: {
+      type:DataTypes.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
       allowNull:false,
+      defaultValue: Enums.ACC_TYPE.PERSONAL,
     },
     NID: {
       type:DataTypes.STRING,
@@ -49,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'User',
+    modelName: 'Request',
   });
-  return User;
+  return Request;
 };

@@ -46,7 +46,7 @@ async function signIn(data){
             }
             throw new AppError(['Incorrect PIN!'],StatusCodes.BAD_REQUEST);
         }
-        const jwt = Utility.createToken({number:data.accNumber});
+        const jwt = Utility.createToken({accNumber:data.accNumber});
         const response = {
             accNumber:data.accNumber,
             token:jwt,
