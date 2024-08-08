@@ -29,6 +29,32 @@ class AccountRepository extends Crud{
         }
     }
 
+    async getByNID(NID){
+        try {
+            const response = await User.findOne({
+                where:{
+                    NID:NID,
+                },
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getFromAccount(accNumber){
+        try {
+            const response = await Account.findOne({
+                where:{
+                    accNumber:accNumber,
+                },
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async updateUser(accNumber,data){
         try {
             const response = await User.update(data,{

@@ -20,6 +20,11 @@ function verifyToken(req,res,next){
     }
 }
 
+//TODO: authorize superadmins
+function authSuperAdmin(req,res,next){
+    
+}
+
 
 module.exports = {
     verifyToken,

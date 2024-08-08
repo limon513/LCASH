@@ -1,4 +1,4 @@
-const {RequestRepository} = require('../repositories');
+const {RequestRepository, AccountRepository} = require('../repositories');
 const AppError = require('../utils/errors/app-error');
 const {StatusCodes} = require('http-status-codes');
 const serverConfig = require('../config/server-config');
@@ -6,12 +6,21 @@ const {Utility} = require('../utils/common');
 const {Enums} = require('../utils/common');
 
 const RequestRepo = new RequestRepository();
+const AccountRepo = new AccountRepository();
 
 async function create(data){
     try {
         const checkRequest = await RequestRepo.getByAccount(data.accNumber);
         if(checkRequest){
             throw new AppError(['Request Already Pending!'],StatusCodes.BAD_REQUEST);
+        }
+        const checkAlreadyResolved = await AccountRepo.getFromAccount(data.accNumber);
+        if(checkAlreadyResolved){
+            throw new AppError(['Account Already Resolved'],StatusCodes.BAD_REQUEST);
+        }
+        const checkRegisteredNID = await AccountRepo.getByNID(data.NID);
+        if(checkRegisteredNID && checkRegisteredNID.NID && checkRegisteredNID.NID === data.NID){
+            throw new AppError(['One account already registered with this NID, please use that account'],StatusCodes.BAD_REQUEST);
         }
         const response = await RequestRepo.create(data);
         return response;
