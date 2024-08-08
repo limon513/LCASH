@@ -51,6 +51,7 @@ async function signIn(data){
             accNumber:data.accNumber,
             token:jwt,
         }
+        await SuspicionService.clearSuspicion(data);
         return response;
     } catch (error) {
         if(error instanceof Error) throw error;

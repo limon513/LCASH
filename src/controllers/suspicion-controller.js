@@ -6,6 +6,7 @@ const {StatusCodes} = require('http-status-codes');
 async function clearSuspicion(req,res){
     try {
         const response = await SuspicionService.clearSuspicion(req.body);
+        SuccessResponse.data = response;
         SuccessResponse.message = serverConfig.SUCCESSFULLVERIFICATIONMESSAGE;
         return res.status(StatusCodes.ACCEPTED).json(SuccessResponse);
     } catch (error) {
