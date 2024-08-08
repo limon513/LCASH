@@ -29,7 +29,27 @@ class AccountRepository extends Crud{
         }
     }
 
-    
+    async updateUser(accNumber,data){
+        try {
+            const response = await User.update(data,{
+                where:{
+                    accNumber:accNumber,
+                }
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async createAccount(data){
+        try {
+            const response = await Account.create(data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 
 }
 

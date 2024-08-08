@@ -34,7 +34,7 @@ async function signIn(data){
             throw new AppError(['Wrong Account Number!'],StatusCodes.BAD_REQUEST);
         }
         const checkForSuspicion = await SuspicionService.checkForSuspicion(data.accNumber);
-        if(checkForSuspicion){
+        if(checkForSuspicion && checkForSuspicion.message){
             throw new AppError([checkForSuspicion.message],StatusCodes.UNAUTHORIZED);
         }
         if(!Utility.checkPIN(data.PIN,chechAccountNumber.PIN)){
@@ -47,11 +47,11 @@ async function signIn(data){
             throw new AppError(['Incorrect PIN!'],StatusCodes.BAD_REQUEST);
         }
         const jwt = Utility.createToken({accNumber:data.accNumber});
+        const clear = await SuspicionService.clearSuspicion(data);
         const response = {
             accNumber:data.accNumber,
             token:jwt,
         }
-        await SuspicionService.clearSuspicion(data);
         return response;
     } catch (error) {
         if(error instanceof Error) throw error;

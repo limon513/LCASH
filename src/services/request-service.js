@@ -21,7 +21,26 @@ async function create(data){
     }
 }
 
+async function resolveRequest(id,resolve){
+    try {
+        const account = await RequestRepo.getById(+id);
+        if(!account) throw new AppError(['Request Not found'],StatusCodes.NOT_FOUND);
+        let response;
+        if(+resolve == 1){
+            response = await RequestRepo.acceptRequest(account);
+        }
+        if(+resolve == 2){
+            response = await RequestRepo.rejectRequest(account);
+        }
+        return response;
+    } catch (error) {
+        // console.log(error);
+        if(error instanceof Error) throw error;
+        throw new AppError(['We are Having Some Issues, Please try again later!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
 
 module.exports = {
     create,
+    resolveRequest,
 }

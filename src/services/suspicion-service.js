@@ -37,7 +37,7 @@ async function clearSuspicion(data){
     try {
         const suspicion = await SuspicionRepo.getByAccountAndType(data.accNumber,Enums.SUSPICION.LOGIN);
         if(!suspicion){
-            throw new AppError(['No need to verify!'],StatusCodes.BAD_REQUEST);
+            return true;
         }
         if(suspicion.vcode && suspicion.vcode != data.PIN){
             throw new AppError(['Verification Code not matching!'],StatusCodes.BAD_REQUEST);

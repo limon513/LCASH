@@ -17,7 +17,22 @@ async function create(req,res){
     }
 }
 
+async function resolveRequest(req,res){
+    try {
+        const response = await RequestService.resolveRequest(req.params.id,req.headers['resolve']);
+        SuccessResponse.data = response;
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+    } catch (error) {
+        if(error instanceof Error){
+            ErrorResponse.error = error;
+        }
+        else ErrorResponse.error = new AppError(['Service Unavailable, Please try again later.'],StatusCodes.INTERNAL_SERVER_ERROR);
+        return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+    }
+}
+
 
 module.exports = {
     create,
+    resolveRequest,
 }
