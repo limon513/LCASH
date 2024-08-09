@@ -9,6 +9,7 @@ async function create(req,res){
         SuccessResponse.data = response;
         return res.status(StatusCodes.OK).json(SuccessResponse);
     } catch (error) {
+        console.log(error);
         if(error instanceof Error){
             ErrorResponse.error = error;
         }

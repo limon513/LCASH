@@ -12,6 +12,14 @@ module.exports = {
       userName: {
         type: Sequelize.STRING,
       },
+      useEmail:{
+        type:Sequelize.STRING,
+        unique:true,
+        allowNull:true,
+        validate:{
+          isEmail:true,
+        },
+      },
       accNumber: {
         type: Sequelize.STRING,
         allowNull:false,

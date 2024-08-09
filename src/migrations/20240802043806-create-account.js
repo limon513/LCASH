@@ -17,14 +17,14 @@ module.exports = {
         unique:true,
       },
       accType: {
-        type: Sequelize.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
+        type: Sequelize.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
         allowNull:false,
         defaultValue: Enums.ACC_TYPE.PERSONAL,
       },
       accStatus: {
-        type: Sequelize.ENUM(Enums.ACC_STATUS.ACTIVE,Enums.ACC_STATUS.PENDING,Enums.ACC_STATUS.BLOCKED),
+        type: Sequelize.ENUM(Enums.ACC_STATUS.ACTIVE,Enums.ACC_STATUS.BLOCKED),
         allowNull:false,
-        defaultValue: Enums.ACC_STATUS.PENDING,
+        defaultValue: Enums.ACC_STATUS.BLOCKED,
       },
       balance: {
         type:Sequelize.DECIMAL(10,2),

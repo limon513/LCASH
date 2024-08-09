@@ -9,8 +9,8 @@ router.post('/signin',AccountMiddleware.signInValidate,AccountController.singIn)
 
 router.post('/verify',SuspicionController.clearSuspicion);
 
-router.post('/request',AuthenticationMiddleware.verifyToken,RequestController.create);
+router.post('/request',AuthenticationMiddleware.verifyToken,RequestMiddleware.validateRequest,RequestController.create);
 
-router.post('/request/resolve/:id',RequestMiddleware.validateResolveRequest,RequestController.resolveRequest);
+router.post('/request/resolve/:id',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,RequestMiddleware.validateResolveRequest,RequestController.resolveRequest);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const ACC_TYPE = {
     PERSONAL: 'personal',
+    AGENT: 'agent',
     MARCHENT: 'marchent',
     SUPERADMIN: 'superadmin',
 }

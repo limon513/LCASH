@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes")
-const { ErrorResponse } = require("../utils/common")
+const { ErrorResponse, Enums } = require("../utils/common")
 const AppError = require("../utils/errors/app-error")
 
 function validateRequest(req,res,next){
@@ -9,6 +9,10 @@ function validateRequest(req,res,next){
     }
     if(!req.body.accType){
         ErrorResponse.error = new AppError(['Please confirm account type'],StatusCodes.BAD_REQUEST);
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+    if(![Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN].includes(req.body.accType)){
+        ErrorResponse.error = new AppError(['Accurate account type not defined.'],StatusCodes.BAD_REQUEST);
         return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
     if(!req.body.NID){

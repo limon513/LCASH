@@ -20,7 +20,7 @@ module.exports = {
         },
       },
       accType: {
-        type: Sequelize.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
+        type: Sequelize.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
         allowNull:false,
         defaultValue: Enums.ACC_TYPE.PERSONAL,
       },

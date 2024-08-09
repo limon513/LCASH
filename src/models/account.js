@@ -27,14 +27,14 @@ module.exports = (sequelize, DataTypes) => {
       unique:true,
     },
     accType: {
-      type:DataTypes.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
+      type:DataTypes.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
       allowNull:false,
       defaultValue: Enums.ACC_TYPE.PERSONAL,
     },
     accStatus: {
-      type:DataTypes.ENUM(Enums.ACC_STATUS.ACTIVE,Enums.ACC_STATUS.PENDING,Enums.ACC_STATUS.BLOCKED),
+      type:DataTypes.ENUM(Enums.ACC_STATUS.ACTIVE,Enums.ACC_STATUS.BLOCKED),
       allowNull:false,
-      defaultValue: Enums.ACC_STATUS.PENDING,
+      defaultValue: Enums.ACC_STATUS.BLOCKED,
     },
     balance: {
       type:DataTypes.DECIMAL(10,2),
