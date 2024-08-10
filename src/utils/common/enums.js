@@ -16,8 +16,17 @@ const SUSPICION = {
     PIN: 'pin',
 }
 
+const TRANSACTION_TYPE = {
+    CASHIN: 'cashin',
+    CASHOUT: 'cashout',
+    SENDMONEY: 'sendmoney',
+    PAYMENT: 'payment',
+    LEND: 'lend',
+}
+
 module.exports = {
     ACC_TYPE,
     ACC_STATUS,
     SUSPICION,
+    TRANSACTION_TYPE,
 }

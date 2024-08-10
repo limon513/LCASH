@@ -13,6 +13,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.Transaction,{
+        foreignKey:'senderAccount',
+        sourceKey:'accNumber',
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE',
+      });
+
+      this.hasOne(models.Transaction,{
+        foreignKey:'reciverAccount',
+        sourceKey:'accNumber',
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE',
+      });
+
       this.belongsTo(models.User,{
         foreignKey:'accNumber',
         onDelete:'CASCADE',
