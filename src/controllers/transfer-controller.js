@@ -5,6 +5,7 @@ const {StatusCodes} = require('http-status-codes');
 const AppError = require('../utils/errors/app-error');
 
 async function CashOut(req,res){
+    req.body.senderAccount = req.body.accNumber;
     try {
         const response = await TransferService.CashOut(req.body);
         SuccessResponse.data = response;

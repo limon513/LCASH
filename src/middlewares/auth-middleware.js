@@ -23,6 +23,26 @@ function verifyToken(req,res,next){
     }
 }
 
+async function isActive(req,res,next){
+    const accNumber = req.body.accNumber;
+    try {
+        const account = await AccountRepo.getFromAccount(accNumber);
+        if(!account){
+            ErrorResponse.error = new AppError(['No active user found! Please verify your Account First.'],StatusCodes.NOT_FOUND);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(account.accStatus !== Enums.ACC_STATUS.ACTIVE){
+            ErrorResponse.error = new AppError(['Your account is blocked due to security concern. Please contact hotline and verify.'],StatusCodes.UNAUTHORIZED);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        next();
+    } catch (error) {
+        if(error instanceof Error) ErrorResponse.error = error;
+        else ErrorResponse.error = new AppError(['Service Unavailable!'],StatusCodes.INTERNAL_SERVER_ERROR);
+        return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+    }
+}
+
 //TODO: authorize superadmins
 async function authSuperAdmin(req,res,next){
     const accNumber = req.body.accNumber;
@@ -45,7 +65,9 @@ async function authSuperAdmin(req,res,next){
 }
 
 
+
 module.exports = {
     verifyToken,
     authSuperAdmin,
+    isActive,
 }

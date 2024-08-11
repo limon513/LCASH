@@ -8,13 +8,13 @@ const SuspicionRepo = new SuspicionRepository();
 
 async function create(data){
     try {
-        const checkForEntry = await SuspicionRepo.getByAccountAndType(data.accNumber,Enums.SUSPICION.LOGIN);
+        const checkForEntry = await SuspicionRepo.getByAccountAndType(data.accNumber,data.type);
         if(checkForEntry){
             if(checkForEntry.attempt >= +serverConfig.ACCEPTLOGINATTEMPT){
                 if(checkForEntry.message){
                     return {accNumber:checkForEntry.accNumber,message:checkForEntry.message};
                 }
-                const updateSuspicion = await SuspicionRepo.update(data.accNumber,Enums.SUSPICION.LOGIN,{
+                const updateSuspicion = await SuspicionRepo.update(data.accNumber,data.type,{
                     message: serverConfig.LOGINATTEMPTMESSAGE,
                     vcode: Utility.generateVcode(),
                 });
@@ -35,14 +35,14 @@ async function create(data){
 
 async function clearSuspicion(data){
     try {
-        const suspicion = await SuspicionRepo.getByAccountAndType(data.accNumber,Enums.SUSPICION.LOGIN);
+        const suspicion = await SuspicionRepo.getByAccountAndType(data.accNumber,data.type);
         if(!suspicion){
             return true;
         }
         if(suspicion.vcode && suspicion.vcode != data.PIN){
             throw new AppError(['Verification Code not matching!'],StatusCodes.BAD_REQUEST);
         }
-        const response = await SuspicionRepo.clearSuspicion(data.accNumber,Enums.SUSPICION.LOGIN);
+        const response = await SuspicionRepo.clearSuspicion(data.accNumber,data.type);
         if(!response){
             throw new AppError(['Verification service unavailable, Please try again later!'],StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -53,9 +53,9 @@ async function clearSuspicion(data){
     }
 }
 
-async function checkForSuspicion(accNumber){
+async function checkForSuspicion(accNumber,type){
     try {
-        const suspicion = await SuspicionRepo.getByAccountAndType(accNumber,Enums.SUSPICION.LOGIN);
+        const suspicion = await SuspicionRepo.getByAccountAndType(accNumber,type);
         if(suspicion && suspicion.vcode && suspicion.message) return suspicion;
         return false;
     } catch (error) {

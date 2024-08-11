@@ -1,4 +1,4 @@
-const {TransferRepository} = require('../repositories');
+const {TransferRepository,SuspicionRepository} = require('../repositories');
 const AppError = require('../utils/errors/app-error');
 const {StatusCodes} = require('http-status-codes');
 const serverConfig = require('../config/server-config');
@@ -6,11 +6,13 @@ const {Utility, Enums} = require('../utils/common');
 const AccountService = require('./account-service');
 
 const TransferRepo = new TransferRepository();
+const SuspicionRepo = new SuspicionRepository();
 
 async function CashOut(data){
     try {
         const transferType = await AccountService.getTransferType(data.senderAccount,data.reciverAccount);
         data.transactionType = transferType;
+        
         const response = await TransferRepo.CashOut(data);
         console.log(response);
         if(response){
