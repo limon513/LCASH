@@ -25,7 +25,19 @@ async function singIn(req,res){
     }
 }
 
+async function unblockAccount(req,res){
+    try {
+        const response = await AccountService.unblockAccount(req.body.number);
+        SuccessResponse.data = response;
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     create,
     singIn,
+    unblockAccount,
 }

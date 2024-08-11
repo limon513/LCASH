@@ -1,6 +1,10 @@
 const Crud = require("./crud-repository");
 
-const {User,Account} = require('../models');
+const {User,Account, sequelize} = require('../models');
+const SuspicionRepository = require('./suspicion-repository');
+const { Enums } = require("../utils/common");
+
+const SuspicionRepo = new SuspicionRepository();
 
 class AccountRepository extends Crud{
     constructor(){
@@ -86,6 +90,19 @@ class AccountRepository extends Crud{
             });
             return response;
         } catch (error) {
+            throw error;
+        }
+    }
+
+    async unblockAccout(accNumber){
+        const transaction = await sequelize.transaction();
+        try {
+            const suspicion = await SuspicionRepo.clearSuspicion(accNumber,Enums.SUSPICION.PIN,{transaction:transaction});
+            const account = await this.updateAccount(accNumber,{accStatus:Enums.ACC_STATUS.ACTIVE},{transaction:transaction});
+            transaction.commit();
+            return {accNumber:accNumber,message:'Account Unblocked!'};
+        } catch (error) {
+            transaction.rollback();
             throw error;
         }
     }

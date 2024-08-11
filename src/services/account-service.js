@@ -99,9 +99,37 @@ async function updateAccount(accNumber,data){
     }
 }
 
+async function getAccountDetails(accNumber){
+    try {
+        const account = await AccountRepo.getFromAccount(accNumber);
+        if(!account){
+            throw new AppError(['Account Not Found!'],StatusCodes.NOT_FOUND);
+        }
+        return account;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Service unavailable'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function unblockAccount(accNumber){
+    try {
+        const checkAccount = await AccountRepo.getFromAccount(accNumber);
+        if(!checkAccount) throw new AppError(['Account Number not correct!'],StatusCodes.NOT_FOUND);
+        if(checkAccount && checkAccount.accStatus !== Enums.ACC_STATUS.BLOCKED) throw new AppError(['Account already active'],StatusCodes.BAD_REQUEST);
+        const account = await AccountRepo.unblockAccout(accNumber);
+        return account;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Service unavailable'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     create,
     signIn,
     getTransferType,
     updateAccount,
+    getAccountDetails,
+    unblockAccount,
 }
