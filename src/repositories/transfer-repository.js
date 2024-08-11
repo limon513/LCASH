@@ -1,5 +1,5 @@
 const Crud = require("./crud-repository");
-const {Account, sequelize} = require('../models');
+const {Account, sequelize, Transfer} = require('../models');
 const {Transaction} = require('sequelize');
 const {server_config} = require('../config');
 const { TranVAR , Utility } = require("../utils/common");
@@ -8,7 +8,7 @@ const { StatusCodes } = require("http-status-codes");
 
 class TransferRepository extends Crud{
     constructor(){
-        super(Transaction);
+        super(Transfer);
     }
 
     async CashOut(data){
@@ -18,6 +18,7 @@ class TransferRepository extends Crud{
         let retries = 0;
         const amount = parseInt(data.amount);
         const charge = parseFloat((amount * TranVAR.TV.cashoutCharges).toFixed(2));
+
         const totalAmount = charge + amount;
         const agentCommision = parseFloat((charge * TranVAR.TV.agenGetsOnCashOut).toFixed(2));
         const LcashRevenue = charge - agentCommision;
@@ -35,54 +36,58 @@ class TransferRepository extends Crud{
                     where:{
                         accNumber:data.senderAccount,
                     },
-                });
+                },{transaction:transaction});
 
                 const reciver = await Account.findOne({
                     where:{
                         accNumber:data.reciverAccount,
                     },
-                });
+                },{transaction:transaction});
 
-                if(sender.balance >= totalAmount){
-                    await sender.decrement('balance',{
-                        by:totalAmount,
-                        transaction:transaction,
-                    });
-
-                    await reciver.increment('balance',{
-                        by:agentGets,
-                        transaction:transaction,
-                    });
-
-                    await Lcash.increment('balance',{
-                        by:LcashRevenue,
-                        transaction:transaction,
-                    });
-
-                }else{
+                if(sender.balance < totalAmount){
                     throw new AppError(['Insufficient Balance'],StatusCodes.BAD_REQUEST);
                 }
+                
+                await sender.decrement('balance',{
+                    by:totalAmount,
+                },{transaction:transaction});
+
+                await reciver.increment('balance',{
+                    by:agentGets,
+                    transaction:transaction,
+                },{transaction:transaction});
+
+                await Lcash.increment('balance',{
+                    by:LcashRevenue,
+                    transaction:transaction,
+                },{transaction:transaction});
+
+                for(let i=0; i<10000000000; i++);
 
                 await transaction.commit();
-                return {message:`${amount}tk Cash out to agent ${reciver.accNumber} is successfull.New balance is ${sender.balance-totalAmount}tk`};
+
+                const response = {message:`${amount}tk Cash out to agent ${reciver.accNumber} is successfull.`,charge: charge,};
+
+                return response;
 
             } catch (error) {
-                await transaction.rollback();
                 if(error instanceof Error) throw error;
-                console.log(error);
+                await transaction.rollback();
+                //console.log(error);
                 retries = retries + 1;
-                await new Promise(resolve => setTimeout(resolve, 2 ** retries * 100));
+                //await new Promise(resolve => setTimeout(resolve, 2 ** retries * 100));
                 continue;
             }
         }
         throw new AppError(['Transaction failed after multiple retries,Please try again later!'],StatusCodes.REQUEST_TIMEOUT);
     }
 
-    async logTransaction(data){
+    async logTransfer(data){
         try {
-            
+            const response = await Transfer.create(data);
+            return response;
         } catch (error) {
-            
+            throw error;
         }
     }
 }

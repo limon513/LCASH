@@ -3,4 +3,5 @@ module.exports = {
     AccountController : require('./account-controller'),
     SuspicionController: require('./suspicion-controller'),
     RequestController: require('./request-controller'),
+    TransferController: require('./transfer-controller'),
 };

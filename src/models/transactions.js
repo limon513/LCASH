@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Transfer.init({
-    TransferId: {
+    transactionId: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -41,8 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull:false,
     },
-    TransferType: {
-      type: DataTypes.ENUM(Enums.Transfer_TYPE.CASHIN,Enums.Transfer_TYPE.CASHOUT,Enums.Transfer_TYPE.SENDMONEY,Enums.Transfer_TYPE.PAYMENT,Enums.Transfer_TYPE.LEND),
+    transactionType: {
+      type:DataTypes.ENUM(Enums.TRANSACTION_TYPE.CASHOUT,Enums.TRANSACTION_TYPE.CASHIN,Enums.TRANSACTION_TYPE.SENDMONEY,Enums.TRANSACTION_TYPE.PAYMENT,Enums.TRANSACTION_TYPE.LEND),
       allowNull:false,
     },
     amount: {
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false,
     },
     status:{
-      type:DataTypes.ENUM(Enums.Transfer_STATUS.SUCCESSFUL,Enums.Transfer_STATUS.FAILED),
+      type:DataTypes.ENUM(Enums.TRANSACTION_STATUS.SUCCESSFUL,Enums.TRANSACTION_STATUS.FAILED),
       allowNull:false,
     },
   }, {

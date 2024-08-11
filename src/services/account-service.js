@@ -59,9 +59,37 @@ async function signIn(data){
     }
 }
 
-
+async function getTransferType(senderAccount,reciverAccount){
+    try {
+        const sender = await AccountRepo.getFromAccount(senderAccount);
+        const reciver = await AccountRepo.getFromAccount(reciverAccount);
+        if(sender.accType === Enums.ACC_TYPE.PERSONAL &&
+            reciver.accType === Enums.ACC_TYPE.AGENT
+        ){
+            return Enums.TRANSACTION_TYPE.CASHOUT;
+        }
+        if(sender.accType == Enums.ACC_TYPE.PERSONAL &&
+            reciver.accType == Enums.ACC_TYPE.PERSONAL
+        ){
+            return Enums.TRANSACTION_TYPE.SENDMONEY;
+        }
+        if(sender.accType == Enums.ACC_TYPE.AGENT &&
+            reciver.accType == Enums.ACC_TYPE.PERSONAL
+        ){
+            return Enums.TRANSACTION_TYPE.CASHIN;
+        }
+        if(sender.accType == Enums.ACC_TYPE.PERSONAL &&
+            reciver.accType == Enums.ACC_TYPE.MARCHENT
+        ){
+            return Enums.TRANSACTION_TYPE.PAYMENT;
+        }
+    } catch (error) {
+        throw new AppError(['Service Unavailable!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
 
 module.exports = {
     create,
     signIn,
+    getTransferType,
 }
