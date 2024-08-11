@@ -15,7 +15,7 @@ async function create(data){
                     return {accNumber:checkForEntry.accNumber,message:checkForEntry.message};
                 }
                 const updateSuspicion = await SuspicionRepo.update(data.accNumber,data.type,{
-                    message: serverConfig.LOGINATTEMPTMESSAGE,
+                    message: serverConfig.PINATTEMPTMESSAGE,
                     vcode: Utility.generateVcode(),
                 });
                 return {accNumber:updateSuspicion.accNumber,message:updateSuspicion.message};

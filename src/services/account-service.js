@@ -89,8 +89,19 @@ async function getTransferType(senderAccount,reciverAccount){
     }
 }
 
+async function updateAccount(accNumber,data){
+    try {
+        const response = await AccountRepo.updateAccount(accNumber,data);
+        return response;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Service Unavailable!'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     create,
     signIn,
     getTransferType,
+    updateAccount,
 }

@@ -77,6 +77,19 @@ class AccountRepository extends Crud{
         }
     }
 
+    async updateAccount(accNumber,data){
+        try {
+            const response = await Account.update(data,{
+                where:{
+                    accNumber:accNumber,
+                }
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 module.exports = AccountRepository;
