@@ -61,8 +61,8 @@ class TransferRepository extends Crud{
                     by:LcashRevenue,
                     transaction:transaction,
                 },{transaction:transaction});
-
-                for(let i=0; i<10000000000; i++);
+                //taking some time for manual tesing with axios
+                for(let i=0; i<100000000; i++);
 
                 await transaction.commit();
 
@@ -75,6 +75,7 @@ class TransferRepository extends Crud{
                 await transaction.rollback();
                 //console.log(error);
                 retries = retries + 1;
+                console.log(`retries = ${retries}`);
                 //await new Promise(resolve => setTimeout(resolve, 2 ** retries * 100));
                 continue;
             }
