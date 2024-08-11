@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const AppError = require('../errors/app-error');
 const { StatusCodes } = require('http-status-codes');
 
+
 function hashThePassword(password){
     const hashedPassword = bcrypt.hashSync(password,+serverConfig.SALTROUND);
     console.log(hashedPassword);
@@ -42,6 +43,9 @@ function createToken(payload){
 function generateVcode(){
     return Math.floor(100000 + Math.random() * 900000);
 }
+
+
+
 
 module.exports = {
     hashThePassword,

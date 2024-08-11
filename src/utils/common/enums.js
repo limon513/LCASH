@@ -24,9 +24,15 @@ const TRANSACTION_TYPE = {
     LEND: 'lend',
 }
 
+const TRANSACTION_STATUS = {
+    SUCCESSFUL: 'successful',
+    FAILED: 'failed',
+}
+
 module.exports = {
     ACC_TYPE,
     ACC_STATUS,
     SUSPICION,
     TRANSACTION_TYPE,
+    TRANSACTION_STATUS,
 }

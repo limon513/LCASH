@@ -3,5 +3,6 @@ module.exports = {
     SuccessResponse: require('./success-response'),
     Enums: require('./enums'),
     Utility: require('./utility-function'),
+    TranVAR: require('./transactional-variables'),
     // CRONS: require('./cron-jobs')
 }

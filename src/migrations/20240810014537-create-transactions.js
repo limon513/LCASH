@@ -3,7 +3,7 @@
 const {Enums} = require('../utils/common');
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Transactions', {
+    await queryInterface.createTable('Transfers', {
       transactionId: {
         allowNull: false,
         autoIncrement: true,
@@ -38,6 +38,10 @@ module.exports = {
         type: Sequelize.DECIMAL(10,2),
         allowNull:false,
       },
+      status:{
+        type:Sequelize.ENUM(Enums.TRANSACTION_STATUS.SUCCESSFUL,Enums.TRANSACTION_STATUS.FAILED),
+        allowNull:false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -47,14 +51,14 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-    await queryInterface.addIndex('Accounts',['accNumber'],{
-      unique:true,
-      indexName:'accNumberIndex',
+    await queryInterface.addIndex('Accounts',{
+      fields:['accNumber'],
+      name:'accNumberIndex',
     });
   },
   
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Transactions');
+    await queryInterface.dropTable('Transfers');
     await queryInterface.removeIndex('Accounts','accNumberIndex');
   }
 };

@@ -4,7 +4,7 @@ const {
 } = require('sequelize');
 const {Enums} = require('../utils/common');
 module.exports = (sequelize, DataTypes) => {
-  class Transaction extends Model {
+  class Transfer extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -26,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Transaction.init({
-    transactionId: {
+  Transfer.init({
+    TransferId: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -41,8 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull:false,
     },
-    transactionType: {
-      type: DataTypes.ENUM(Enums.TRANSACTION_TYPE.CASHIN,Enums.TRANSACTION_TYPE.CASHOUT,Enums.TRANSACTION_TYPE.SENDMONEY,Enums.TRANSACTION_TYPE.PAYMENT,Enums.TRANSACTION_TYPE.LEND),
+    TransferType: {
+      type: DataTypes.ENUM(Enums.Transfer_TYPE.CASHIN,Enums.Transfer_TYPE.CASHOUT,Enums.Transfer_TYPE.SENDMONEY,Enums.Transfer_TYPE.PAYMENT,Enums.Transfer_TYPE.LEND),
       allowNull:false,
     },
     amount: {
@@ -53,9 +53,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull:false,
     },
+    status:{
+      type:DataTypes.ENUM(Enums.Transfer_STATUS.SUCCESSFUL,Enums.Transfer_STATUS.FAILED),
+      allowNull:false,
+    },
   }, {
     sequelize,
-    modelName: 'Transaction',
+    modelName: 'Transfer',
   });
-  return Transaction;
+  return Transfer;
 };
