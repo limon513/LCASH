@@ -54,6 +54,20 @@ async function TransferMoney(data){
     }
 }
 
+async function getTransactions(data){
+    try {
+        const response = await TransferRepo.getTransactions(data);
+        if(!response){
+            throw new AppError(['No transactions found'],StatusCodes.NOT_FOUND);
+        }
+        return response;
+    } catch (error) {
+        if(error instanceof Error) throw error;
+        throw new AppError(['Service unavailable'].StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     TransferMoney,
+    getTransactions,
 }

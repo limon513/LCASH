@@ -17,4 +17,6 @@ router.post('/transfer',AuthenticationMiddleware.verifyToken,TransferMiddleware.
 
 router.put('/unblock',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,AccountController.unblockAccount);
 
+router.get('/transactions',AuthenticationMiddleware.verifyToken,TransferController.getTransactions);
+
 module.exports = router;

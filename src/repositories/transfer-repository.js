@@ -1,6 +1,6 @@
 const Crud = require("./crud-repository");
 const {Account, sequelize, Transfer} = require('../models');
-const {Transaction} = require('sequelize');
+const {Transaction, where} = require('sequelize');
 const {server_config} = require('../config');
 const { TranVAR , Utility, Enums } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
@@ -65,7 +65,7 @@ class TransferRepository extends Crud{
                     transaction:transaction,
                 },{transaction:transaction});
                 //taking some time for manual tesing with axios
-                for(let i=0; i<100000000; i++);
+                //for(let i=0; i<100000000; i++);
 
                 await transaction.commit();
 
@@ -81,7 +81,7 @@ class TransferRepository extends Crud{
                 //console.log(error);
                 retries = retries + 1;
                 console.log(`retries = ${retries}`);
-                //await new Promise(resolve => setTimeout(resolve, 2 ** retries * 100));
+                await new Promise(resolve => setTimeout(resolve, 2 ** retries * 100)); //exponential backoff on every retries;
                 continue;
             }
         }
@@ -91,6 +91,21 @@ class TransferRepository extends Crud{
     async logTransfer(data){
         try {
             const response = await Transfer.create(data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getTransactions(data){
+        try {
+            const response = await Transfer.findAll({
+                attributes:{ exclude : ['senderAccount','updatedAt','status'] },
+                where:{
+                    senderAccount:data.accNumber,
+                    status:Enums.TRANSACTION_STATUS.SUCCESSFUL,
+                },
+            });
             return response;
         } catch (error) {
             throw error;

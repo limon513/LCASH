@@ -42,6 +42,18 @@ async function TransferMoney(req, res) {
     }
 }
 
+async function getTransactions(req,res){
+    try {
+        const response = await TransferService.getTransactions(req.body);
+        SuccessResponse.data = response;
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     TransferMoney,
+    getTransactions,
 }
