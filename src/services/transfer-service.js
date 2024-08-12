@@ -10,7 +10,7 @@ const TransferRepo = new TransferRepository();
 const SuspicionRepo = new SuspicionRepository();
 const AccountRepo = new AccountRepository();
 
-async function CashOut(data){
+async function TransferMoney(data){
     try {
         const transferType = await AccountService.getTransferType(data.senderAccount,data.reciverAccount);
         data.transactionType = transferType;
@@ -33,17 +33,21 @@ async function CashOut(data){
             await SuspicionRepo.clearSuspicion(data.senderAccount,Enums.SUSPICION.PIN);
         }
 
-        const response = await TransferRepo.CashOut(data);
-        console.log(response);
+        const response = await TransferRepo.TransferMoney(data);
+        //console.log(response);
+        let TransferResponse;
         if(response){
             data.status = Enums.TRANSACTION_STATUS.SUCCESSFUL;
             data.charges = response.charge;
-            await TransferRepo.logTransfer(data);
+            const transgerLog = await TransferRepo.logTransfer(data);
+            TransferResponse = Utility.createResponseForTransfer(transgerLog.status,transgerLog.transactionId,transferType,response.amount,response.charge,response.reciverAccount);
         }else{
             data.status = Enums.TRANSACTION_STATUS.FAILED;
-            data.charges = 0;
+            data.charges = response.charge;
+            const transgerLog = await TransferRepo.logTransfer(data);
+            TransferResponse = Utility.createResponseForTransfer(transgerLog.status,transgerLog.transactionId,transferType,response.amount,response.charge,response.reciverAccount);
         }
-        return response;
+        return TransferResponse;
     } catch (error) {
         if(error instanceof Error) throw error;
         throw new AppError(['Service Unavailable!'],StatusCodes.INTERNAL_SERVER_ERROR);
@@ -51,5 +55,5 @@ async function CashOut(data){
 }
 
 module.exports = {
-    CashOut,
+    TransferMoney,
 }

@@ -6,7 +6,7 @@ const AppError = require('../utils/errors/app-error');
 
 const IdempotencyRedis = {};
 
-async function CashOut(req, res) {
+async function TransferMoney(req, res) {
     req.body.senderAccount = req.body.accNumber;
     try {
         const idempotencyKey = req.headers['x-idempotency-key'];
@@ -19,7 +19,7 @@ async function CashOut(req, res) {
             throw new AppError(['Duplicate Request!'], StatusCodes.BAD_REQUEST);
         }
 
-        const response = await TransferService.CashOut(req.body);
+        const response = await TransferService.TransferMoney(req.body);
 
         IdempotencyRedis[idempotencyKey] = idempotencyKey;
 
@@ -43,5 +43,5 @@ async function CashOut(req, res) {
 }
 
 module.exports = {
-    CashOut,
+    TransferMoney,
 }

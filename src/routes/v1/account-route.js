@@ -13,7 +13,7 @@ router.post('/request',AuthenticationMiddleware.verifyToken,RequestMiddleware.va
 
 router.post('/request/resolve/:id',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,RequestMiddleware.validateResolveRequest,RequestController.resolveRequest);
 
-router.post('/transfer',AuthenticationMiddleware.verifyToken,TransferMiddleware.transferValidate,TransferController.CashOut);
+router.post('/transfer',AuthenticationMiddleware.verifyToken,TransferMiddleware.transferValidate,TransferController.TransferMoney);
 
 router.put('/unblock',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,AccountController.unblockAccount);
 

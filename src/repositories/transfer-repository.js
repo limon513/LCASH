@@ -2,7 +2,7 @@ const Crud = require("./crud-repository");
 const {Account, sequelize, Transfer} = require('../models');
 const {Transaction} = require('sequelize');
 const {server_config} = require('../config');
-const { TranVAR , Utility } = require("../utils/common");
+const { TranVAR , Utility, Enums } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
 const { StatusCodes } = require("http-status-codes");
 
@@ -11,18 +11,20 @@ class TransferRepository extends Crud{
         super(Transfer);
     }
 
-    async CashOut(data){
+    async TransferMoney(data){
         const transaction = await sequelize.transaction({
             isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE,
         });
         let retries = 0;
-        const amount = parseInt(data.amount);
-        const charge = parseFloat((amount * TranVAR.TV.cashoutCharges).toFixed(2));
 
+        const amount = parseInt(data.amount);
+        const charge = Utility.calculateChargesOnTransfer(data.transactionType,amount);
         const totalAmount = charge + amount;
-        const agentCommision = parseFloat((charge * TranVAR.TV.agenGetsOnCashOut).toFixed(2));
-        const LcashRevenue = charge - agentCommision;
-        const agentGets = amount + agentCommision;
+        let reciverCommision = data.transactionType === Enums.TRANSACTION_TYPE.CASHOUT ? 
+                                parseFloat((charge * TranVAR.TV.agenGetsOnCashOut).toFixed(2)) :
+                                parseFloat((0).toFixed(2));
+        const LcashRevenue = charge - reciverCommision;
+        const reciverAmount= amount + reciverCommision;
 
         const Lcash = await Account.findOne({
             where:{
@@ -53,11 +55,12 @@ class TransferRepository extends Crud{
                 },{transaction:transaction});
 
                 await reciver.increment('balance',{
-                    by:agentGets,
+                    by:reciverAmount,
                     transaction:transaction,
                 },{transaction:transaction});
 
-                await Lcash.increment('balance',{
+                if(data.transactionType !== Enums.TRANSACTION_TYPE.CASHIN)
+                    await Lcash.increment('balance',{
                     by:LcashRevenue,
                     transaction:transaction,
                 },{transaction:transaction});
@@ -66,8 +69,10 @@ class TransferRepository extends Crud{
 
                 await transaction.commit();
 
-                const response = {message:`${amount}tk Cash out to agent ${reciver.accNumber} is successfull.`,charge: charge,};
-
+                const response = {reciverAccount:data.reciverAccount,
+                                    amount:amount,
+                                    charge:charge,
+                                };
                 return response;
 
             } catch (error) {

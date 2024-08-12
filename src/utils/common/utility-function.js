@@ -3,6 +3,8 @@ const serverConfig = require('../../config/server-config');
 const jwt = require('jsonwebtoken');
 const AppError = require('../errors/app-error');
 const { StatusCodes } = require('http-status-codes');
+const Enums = require('./enums');
+const TranVAR = require('./transactional-variables');
 
 
 function hashThePassword(password){
@@ -44,7 +46,33 @@ function generateVcode(){
     return Math.floor(100000 + Math.random() * 900000);
 }
 
+function calculateChargesOnTransfer(transferType,amount){
+    let charge;
+    switch (transferType) {
+        case Enums.TRANSACTION_TYPE.CASHOUT:
+            charge = parseFloat((amount * TranVAR.TV.cashoutCharges).toFixed(2));
+            break;
+        case Enums.TRANSACTION_TYPE.CASHIN:
+            charge = parseFloat((0).toFixed(2));
+            break;
+        case Enums.TRANSACTION_TYPE.SENDMONEY:
+            charge = parseFloat((TranVAR.TV.sendMoneyCharges).toFixed(2));
+            break;
+        case Enums.TRANSACTION_TYPE.PAYMENT:
+            charge = parseFloat((0).toFixed(2));
+            break;
+        default:
+            break;
+    }
+    return charge;
+}
 
+function createResponseForTransfer(status,transactionId,transferType,amount,charge,reciverAccount){
+    if(status === Enums.TRANSACTION_STATUS.SUCCESSFUL){
+        return `${transferType} ${amount}tk with charge ${charge}tk to ${reciverAccount} is successfull. TRANSACTION ID ${transactionId}`;
+    }
+    return `${transferType} to ${reciverAccount} failed. TRANSACTION ID ${transactionId}`;
+}
 
 
 module.exports = {
@@ -54,4 +82,6 @@ module.exports = {
     checkPIN,
     createToken,
     generateVcode,
+    calculateChargesOnTransfer,
+    createResponseForTransfer,
 }
