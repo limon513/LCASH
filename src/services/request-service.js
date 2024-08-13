@@ -50,7 +50,16 @@ async function resolveRequest(id,resolve){
     }
 }
 
+async function resetTransferLimit(){
+        try {
+            return await AccountThroughRepo.resetTransferLimit();
+        } catch (error) {
+            return false;
+        }
+    }
+
 module.exports = {
     create,
     resolveRequest,
+    resetTransferLimit,
 }

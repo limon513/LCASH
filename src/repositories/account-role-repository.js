@@ -47,6 +47,14 @@ class AccountThroughRepository extends Crud{
         }
     }
 
+    async resetTransferLimit(){
+        try {
+            const response = await sequelize.query('UPDATE Accout_Role_Throughs set remainingLimit = dailyLimit');
+            return response;   
+        } catch (error) {
+            throw error;
+        }
+    }
 
     async unblockAccout(accNumber){
         const transaction = await sequelize.transaction();

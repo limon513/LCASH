@@ -4,5 +4,4 @@ module.exports = {
     Enums: require('./enums'),
     Utility: require('./utility-function'),
     TranVAR: require('./transactional-variables'),
-    // CRONS: require('./cron-jobs')
 }
