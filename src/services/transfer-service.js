@@ -33,6 +33,10 @@ async function TransferMoney(data){
             await SuspicionRepo.clearSuspicion(data.senderAccount,Enums.SUSPICION.PIN);
         }
 
+        if(data.senderAccount === data.reciverAccount){
+            throw new AppError(['You can not transfer to you!'],StatusCodes.BAD_REQUEST);
+        }
+
         const response = await TransferRepo.TransferMoney(data);
         //console.log(response);
         let TransferResponse;

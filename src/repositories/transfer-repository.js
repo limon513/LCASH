@@ -1,10 +1,11 @@
 const Crud = require("./crud-repository");
-const {Account, sequelize, Transfer} = require('../models');
+const {Account, sequelize, Transfer,Accout_Role_Through} = require('../models');
 const {Transaction, where} = require('sequelize');
 const {server_config} = require('../config');
 const { TranVAR , Utility, Enums } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
 const { StatusCodes } = require("http-status-codes");
+
 
 class TransferRepository extends Crud{
     constructor(){
@@ -25,6 +26,16 @@ class TransferRepository extends Crud{
                                 parseFloat((0).toFixed(2));
         const LcashRevenue = charge - reciverCommision;
         const reciverAmount= amount + reciverCommision;
+
+        const senderAccountInfo = await Accout_Role_Through.findOne({
+            where:{
+                accNumber:data.senderAccount,
+            }
+        },{transaction:transaction});
+
+        if(senderAccountInfo.dailyLimit != TranVAR.TV.dailyLimit && senderAccountInfo.remainingLimit < amount){
+            throw new AppError([`Your Todays Limit excceded! you can transfer only ${senderAccountInfo.remainingLimit}tk for today.`],StatusCodes.BAD_REQUEST);
+        }
 
         const Lcash = await Account.findOne({
             where:{
@@ -56,16 +67,20 @@ class TransferRepository extends Crud{
 
                 await reciver.increment('balance',{
                     by:reciverAmount,
-                    transaction:transaction,
                 },{transaction:transaction});
+
+                if(senderAccountInfo.dailyLimit != TranVAR.TV.dailyLimit)
+                    await senderAccountInfo.decrement('remainingLimit',{
+                        by:amount,
+                    },{transaction:transaction});
 
                 if(data.transactionType !== Enums.TRANSACTION_TYPE.CASHIN)
                     await Lcash.increment('balance',{
                     by:LcashRevenue,
-                    transaction:transaction,
                 },{transaction:transaction});
+               
                 //taking some time for manual tesing with axios
-                //for(let i=0; i<100000000; i++);
+                for(let i=0; i<100000000; i++);
 
                 await transaction.commit();
 
