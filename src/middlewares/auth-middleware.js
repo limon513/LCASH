@@ -3,9 +3,9 @@ const {SuccessResponse,ErrorResponse, Enums} = require('../utils/common');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../utils/errors/app-error');
 const serverConfig = require('../config/server-config');
-const { AccountRepository } = require('../repositories');
+const { AccountThroughRepository } = require('../repositories');
 
-const AccountRepo = new AccountRepository();
+const AccountThroughRepo = new AccountThroughRepository();
 
 function verifyToken(req,res,next){
     const token = req.headers['x-access-token'];
@@ -26,7 +26,7 @@ function verifyToken(req,res,next){
 async function isActive(req,res,next){
     const accNumber = req.body.accNumber;
     try {
-        const account = await AccountRepo.getFromAccount(accNumber);
+        const account = await AccountThroughRepo.getByAccount(accNumber);
         if(!account){
             ErrorResponse.error = new AppError(['No active user found! Please verify your Account First.'],StatusCodes.NOT_FOUND);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
@@ -47,9 +47,13 @@ async function isActive(req,res,next){
 async function authSuperAdmin(req,res,next){
     const accNumber = req.body.accNumber;
     try {
-        const superAdmin = await AccountRepo.getFromAccount(accNumber);
-        if(!superAdmin || superAdmin.accStatus !== Enums.ACC_STATUS.ACTIVE){
+        const superAdmin = await AccountThroughRepo.getByAccount(accNumber);
+        if(!superAdmin){
             ErrorResponse.error = new AppError(['No active user found!'],StatusCodes.NOT_FOUND);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(superAdmin.accStatus !== Enums.ACC_STATUS.ACTIVE){
+            ErrorResponse.error = new AppError(['You are not Authorized for this!'],StatusCodes.NOT_FOUND);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
         }
         if(superAdmin.accType !== Enums.ACC_TYPE.SUPERADMIN){

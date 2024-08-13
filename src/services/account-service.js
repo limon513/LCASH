@@ -1,4 +1,4 @@
-const {AccountRepository} = require('../repositories');
+const {AccountRepository,AccountThroughRepository} = require('../repositories');
 const AppError = require('../utils/errors/app-error');
 const {StatusCodes} = require('http-status-codes');
 const bcrypt = require('bcrypt');
@@ -8,6 +8,7 @@ const SuspicionService = require('./suspicion-service');
 const {Enums} = require('../utils/common');
 
 const AccountRepo = new AccountRepository();
+const AccountThroughRepo = new AccountThroughRepository();
 
 async function create(data){
     try {
@@ -62,8 +63,8 @@ async function signIn(data){
 
 async function getTransferType(senderAccount,reciverAccount){
     try {
-        const sender = await AccountRepo.getFromAccount(senderAccount);
-        const reciver = await AccountRepo.getFromAccount(reciverAccount);
+        const sender = await AccountThroughRepo.getByAccount(senderAccount);
+        const reciver = await AccountThroughRepo.getByAccount(reciverAccount);
         if(sender.accType === Enums.ACC_TYPE.PERSONAL &&
             reciver.accType === Enums.ACC_TYPE.AGENT
         ){
@@ -91,7 +92,7 @@ async function getTransferType(senderAccount,reciverAccount){
 
 async function updateAccount(accNumber,data){
     try {
-        const response = await AccountRepo.updateAccount(accNumber,data);
+        const response = await AccountThroughRepo.updateAccountThroug(accNumber,data);
         return response;
     } catch (error) {
         if(error instanceof Error) throw error;
@@ -101,7 +102,7 @@ async function updateAccount(accNumber,data){
 
 async function getAccountDetails(accNumber){
     try {
-        const account = await AccountRepo.getFromAccount(accNumber);
+        const account = await AccountThroughRepo.getByAccount(accNumber);
         if(!account){
             throw new AppError(['Account Not Found!'],StatusCodes.NOT_FOUND);
         }
@@ -114,10 +115,10 @@ async function getAccountDetails(accNumber){
 
 async function unblockAccount(accNumber){
     try {
-        const checkAccount = await AccountRepo.getFromAccount(accNumber);
+        const checkAccount = await AccountThroughRepo.getByAccount(accNumber);
         if(!checkAccount) throw new AppError(['Account Number not correct!'],StatusCodes.NOT_FOUND);
         if(checkAccount && checkAccount.accStatus !== Enums.ACC_STATUS.BLOCKED) throw new AppError(['Account already active'],StatusCodes.BAD_REQUEST);
-        const account = await AccountRepo.unblockAccout(accNumber);
+        const account = await AccountThroughRepo.unblockAccout(accNumber);
         return account;
     } catch (error) {
         if(error instanceof Error) throw error;

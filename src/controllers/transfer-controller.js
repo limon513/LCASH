@@ -1,6 +1,6 @@
 const serverConfig = require('../config/server-config');
 const TransferService = require('../services/transfer-service');
-const { ErrorResponse, SuccessResponse } = require('../utils/common');
+const { ErrorResponse, SuccessResponse, Utility } = require('../utils/common');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../utils/errors/app-error');
 

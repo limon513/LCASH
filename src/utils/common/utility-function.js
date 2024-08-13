@@ -74,6 +74,18 @@ function createResponseForTransfer(status,transactionId,transferType,amount,char
     return `${transferType} to ${reciverAccount} failed. TRANSACTION ID ${transactionId}`;
 }
 
+function sortData(sortBy,order,data){
+    if(order === 'asc'){
+        data.sort((a,b) =>{
+            return a[sortBy] - b[sortBy];
+        })
+        return data;
+    }
+    data.sort((a,b) =>{
+        return b[sortBy] -a[sortBy];
+    })
+}
+
 
 module.exports = {
     hashThePassword,
@@ -84,4 +96,5 @@ module.exports = {
     generateVcode,
     calculateChargesOnTransfer,
     createResponseForTransfer,
+    sortData,
 }

@@ -3,9 +3,9 @@ const {SuccessResponse,ErrorResponse, Enums} = require('../utils/common');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../utils/errors/app-error');
 const serverConfig = require('../config/server-config');
-const { AccountRepository } = require('../repositories');
+const { AccountThroughRepository } = require('../repositories');
 
-const AccountRepo = new AccountRepository();
+const AccountThroughRepo = new AccountThroughRepository();
 
 
 async function transferValidate(req,res,next){
@@ -22,7 +22,7 @@ async function transferValidate(req,res,next){
         return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
     try {
-        const account = await AccountRepo.getFromAccount(req.body.accNumber);
+        const account = await AccountThroughRepo.getByAccount(req.body.accNumber);
         if(!account){
             ErrorResponse.error = new AppError(['No active user found! Please verify your Account First.'],StatusCodes.NOT_FOUND);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
@@ -32,7 +32,7 @@ async function transferValidate(req,res,next){
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
         }
         req.body.senderAccount = req.body.accNumber;
-        const reciveraccount = await AccountRepo.getFromAccount(req.body.reciverAccount);
+        const reciveraccount = await AccountThroughRepo.getByAccount(req.body.reciverAccount);
         if(!reciveraccount){
             ErrorResponse.error = new AppError(['No Lcash account in this number!'],StatusCodes.NOT_FOUND);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);

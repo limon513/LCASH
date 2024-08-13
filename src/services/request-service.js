@@ -1,4 +1,4 @@
-const {RequestRepository, AccountRepository} = require('../repositories');
+const {RequestRepository, AccountRepository,AccountThroughRepository} = require('../repositories');
 const AppError = require('../utils/errors/app-error');
 const {StatusCodes} = require('http-status-codes');
 const serverConfig = require('../config/server-config');
@@ -7,6 +7,7 @@ const {Enums} = require('../utils/common');
 
 const RequestRepo = new RequestRepository();
 const AccountRepo = new AccountRepository();
+const AccountThroughRepo = new AccountThroughRepository();
 
 async function create(data){
     try {
@@ -14,7 +15,7 @@ async function create(data){
         if(checkRequest){
             throw new AppError(['Request Already Pending!'],StatusCodes.BAD_REQUEST);
         }
-        const checkAlreadyResolved = await AccountRepo.getFromAccount(data.accNumber);
+        const checkAlreadyResolved = await AccountThroughRepo.getByAccount(data.accNumber);
         if(checkAlreadyResolved){
             throw new AppError(['Account Already Resolved'],StatusCodes.BAD_REQUEST);
         }

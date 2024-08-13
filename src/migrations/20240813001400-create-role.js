@@ -1,32 +1,19 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 const {Enums} = require('../utils/common');
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Accounts', {
+    await queryInterface.createTable('Roles', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      accNumber: {
-        type: Sequelize.STRING,
-        allowNull:false,
+      accType: {
+        type: Sequelize.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
         unique:true,
-      },
-      balance: {
-        type:Sequelize.DECIMAL(10,2),
         allowNull:false,
-        defaultValue:0,
-        validate:{
-          min:0,
-        },
-      },
-      version:{
-        type:Sequelize.INTEGER,
-        defaultValue:0,
       },
       createdAt: {
         allowNull: false,
@@ -39,6 +26,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Accounts');
+    await queryInterface.dropTable('Roles');
   }
 };

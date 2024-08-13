@@ -13,6 +13,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.Accout_Role_Through,{
+        foreignKey:'accNumber',
+        sourceKey:'accNumber',
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE',
+      });
+
       this.hasOne(models.Transfer,{
         foreignKey:'senderAccount',
         sourceKey:'accNumber',
@@ -39,16 +46,6 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull:false,
       unique:true,
-    },
-    accType: {
-      type:DataTypes.ENUM(Enums.ACC_TYPE.PERSONAL,Enums.ACC_TYPE.AGENT,Enums.ACC_TYPE.MARCHENT,Enums.ACC_TYPE.SUPERADMIN),
-      allowNull:false,
-      defaultValue: Enums.ACC_TYPE.PERSONAL,
-    },
-    accStatus: {
-      type:DataTypes.ENUM(Enums.ACC_STATUS.ACTIVE,Enums.ACC_STATUS.BLOCKED),
-      allowNull:false,
-      defaultValue: Enums.ACC_STATUS.BLOCKED,
     },
     balance: {
       type:DataTypes.DECIMAL(10,2),

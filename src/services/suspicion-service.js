@@ -14,8 +14,9 @@ async function create(data){
                 if(checkForEntry.message){
                     return {accNumber:checkForEntry.accNumber,message:checkForEntry.message};
                 }
+                const givemessage = (data.type === Enums.SUSPICION.LOGIN) ? serverConfig.LOGINATTEMPTMESSAGE : serverConfig.PINATTEMPTMESSAGE;
                 const updateSuspicion = await SuspicionRepo.update(data.accNumber,data.type,{
-                    message: serverConfig.PINATTEMPTMESSAGE,
+                    message: givemessage,
                     vcode: Utility.generateVcode(),
                 });
                 return {accNumber:updateSuspicion.accNumber,message:updateSuspicion.message};

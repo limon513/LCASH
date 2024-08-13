@@ -5,4 +5,5 @@ module.exports={
     SuspicionRepository: require('./suspicion-repository'),
     RequestRepository: require('./request-repository'),
     TransferRepository: require('./transfer-repository'),
+    AccountThroughRepository: require('./account-role-repository'),
 }
