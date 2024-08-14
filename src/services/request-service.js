@@ -20,7 +20,9 @@ async function create(data){
             throw new AppError(['Account Already Resolved'],StatusCodes.BAD_REQUEST);
         }
         const checkRegisteredNID = await AccountRepo.getByNID(data.NID);
-        if(checkRegisteredNID && checkRegisteredNID.NID && checkRegisteredNID.NID === data.NID){
+        const accountDetails = await AccountThroughRepo.getByAccount(data.accNumber);
+
+        if(checkRegisteredNID && checkRegisteredNID.NID && checkRegisteredNID.NID === data.NID && accountDetails && accountDetails.accType === data.accType){
             throw new AppError(['One account already registered with this NID, please use that account'],StatusCodes.BAD_REQUEST);
         }
         const response = await RequestRepo.create(data);
