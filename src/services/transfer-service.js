@@ -67,6 +67,24 @@ async function sendMoney(data){
     }
 }
 
+async function payment(data){
+    let userLoseMoney = parseInt(data.amount);
+    data.actualAmount = userLoseMoney;
+    const charge = Utility.calculateChargesOnTransfer(data.transactionType,userLoseMoney);
+    data.charge = charge;
+    data.userLose = userLoseMoney;
+    const reciverGetsMoney = data.actualAmount - charge;
+    data.reciverGets = reciverGetsMoney;
+    const LcashGetsMoney = charge;
+    data.LcashGets = LcashGetsMoney;
+
+    try {
+        return await TransferRepo.TransferMoney(data);
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function TransferMoney(data){
     try {
         const account = await AccountRepo.getByAccount(data.senderAccount);
@@ -107,9 +125,9 @@ async function TransferMoney(data){
             response = await sendMoney(data);
         }
 
-        // if(transferType === Enums.TRANSACTION_TYPE.PAYMENT){
-        //     response = await TransferService.payment(req.body);
-        // }
+        if(transferType === Enums.TRANSACTION_TYPE.PAYMENT){
+            response = await payment(data);
+        }
 
         let TransferResponse;
         if(response){

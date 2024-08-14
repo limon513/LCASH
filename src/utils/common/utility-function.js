@@ -59,7 +59,7 @@ function calculateChargesOnTransfer(transferType,amount){
             charge = parseFloat((TranVAR.TV.sendMoneyCharges).toFixed(2));
             break;
         case Enums.TRANSACTION_TYPE.PAYMENT:
-            charge = parseFloat((0).toFixed(2));
+            charge = parseFloat((amount * TranVAR.TV.LcashGetsOnPayment).toFixed(2));
             break;
         default:
             break;

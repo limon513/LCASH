@@ -70,6 +70,13 @@ async function isActive(req,res,next){
             }
         }
 
+        if(req.body.transactionType === Enums.TRANSACTION_TYPE.PAYMENT){
+            if(reciverAccount.accType !== Enums.ACC_TYPE.MARCHENT){
+                ErrorResponse.error = new AppError(['Given Account is not a Marchent!'],StatusCodes.NOT_ACCEPTABLE);
+                return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+            }
+        }
+
         next();
     } catch (error) {
         if(error instanceof Error) ErrorResponse.error = error;

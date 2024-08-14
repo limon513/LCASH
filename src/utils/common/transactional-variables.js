@@ -3,9 +3,11 @@ const TV = {
     cashoutCharges: 0.01,
     sendMoneyCharges: 5,
     agenGetsOnCashOut: .4,
+    LcashGetsOnPayment: 0.02,
     LcashAccount: '01915657607',
     dailyLimit: -1,
     personalAccountLimit: 250,
+
 }
 
 module.exports = {
