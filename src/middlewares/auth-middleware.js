@@ -44,10 +44,32 @@ async function isActive(req,res,next){
             ErrorResponse.error = new AppError(['reciver account is not active!'],StatusCodes.NOT_ACCEPTABLE);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
         }
-        if(reciverAccount.accType !== Enums.ACC_TYPE.AGENT){
-            ErrorResponse.error = new AppError(['you can only cashout to agents!'],StatusCodes.NOT_ACCEPTABLE);
-            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+
+        if(req.body.transactionType === Enums.TRANSACTION_TYPE.CASHOUT){
+            if(reciverAccount.accType !== Enums.ACC_TYPE.AGENT){
+                ErrorResponse.error = new AppError(['you can only cashout to agents!'],StatusCodes.NOT_ACCEPTABLE);
+                return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+            }
         }
+
+        if(req.body.transactionType === Enums.TRANSACTION_TYPE.CASHIN){
+            if(senderAccount.accType !== Enums.ACC_TYPE.AGENT){
+                ErrorResponse.error = new AppError(['you are not allowed for this transfer!'],StatusCodes.NOT_ACCEPTABLE);
+                return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+            }
+            if(reciverAccount.accType === Enums.ACC_TYPE.MARCHENT){
+                ErrorResponse.error = new AppError(['you can only make payments to marchents!'],StatusCodes.NOT_ACCEPTABLE);
+                return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+            }
+        }
+
+        if(req.body.transactionType === Enums.TRANSACTION_TYPE.SENDMONEY){
+            if(reciverAccount.accType !== Enums.ACC_TYPE.PERSONAL || senderAccount.accType !== Enums.ACC_TYPE.PERSONAL){
+                ErrorResponse.error = new AppError(['Send money are allowed only personal to personal accounts!'],StatusCodes.NOT_ACCEPTABLE);
+                return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+            }
+        }
+
         next();
     } catch (error) {
         if(error instanceof Error) ErrorResponse.error = error;

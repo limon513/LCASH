@@ -29,6 +29,44 @@ async function cashOut(data){
     }
 }
 
+async function cashIn(data){
+    let userLoseMoney = parseInt(data.amount);
+    data.actualAmount = userLoseMoney;
+    const charge = Utility.calculateChargesOnTransfer(data.transactionType,userLoseMoney);
+    data.charge = charge;
+    userLoseMoney += charge;
+    data.userLose = userLoseMoney;
+    const reciverGetsMoney = data.actualAmount + charge
+    data.reciverGets = reciverGetsMoney;
+    const LcashGetsMoney = userLoseMoney - reciverGetsMoney;
+    data.LcashGets = LcashGetsMoney;
+
+    try {
+        return await TransferRepo.TransferMoney(data);
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function sendMoney(data){
+    let userLoseMoney = parseInt(data.amount);
+    data.actualAmount = userLoseMoney;
+    const charge = Utility.calculateChargesOnTransfer(data.transactionType,userLoseMoney);
+    data.charge = charge;
+    userLoseMoney += charge;
+    data.userLose = userLoseMoney;
+    const reciverGetsMoney = data.actualAmount;
+    data.reciverGets = reciverGetsMoney;
+    const LcashGetsMoney = userLoseMoney - reciverGetsMoney;
+    data.LcashGets = LcashGetsMoney;
+
+    try {
+        return await TransferRepo.TransferMoney(data);
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function TransferMoney(data){
     try {
         const account = await AccountRepo.getByAccount(data.senderAccount);
@@ -61,13 +99,13 @@ async function TransferMoney(data){
             response = await cashOut(data);
         }
         
-        // if(transferType === Enums.TRANSACTION_TYPE.CASHIN){
-        //     response = await TransferService.cashIn(req.body);
-        // }
+        if(transferType === Enums.TRANSACTION_TYPE.CASHIN){
+            response = await cashIn(data);
+        }
 
-        // if(transferType === Enums.TRANSACTION_TYPE.SENDMONEY){
-        //     response = await TransferService.sendMoney(req.body);
-        // }
+        if(transferType === Enums.TRANSACTION_TYPE.SENDMONEY){
+            response = await sendMoney(data);
+        }
 
         // if(transferType === Enums.TRANSACTION_TYPE.PAYMENT){
         //     response = await TransferService.payment(req.body);
