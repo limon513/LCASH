@@ -18,22 +18,13 @@ class TransferRepository extends Crud{
         });
         let retries = 0;
 
-        const amount = parseInt(data.amount);
-        const charge = Utility.calculateChargesOnTransfer(data.transactionType,amount);
-        const totalAmount = charge + amount;
-        let reciverCommision = data.transactionType === Enums.TRANSACTION_TYPE.CASHOUT ? 
-                                parseFloat((charge * TranVAR.TV.agenGetsOnCashOut).toFixed(2)) :
-                                parseFloat((0).toFixed(2));
-        const LcashRevenue = charge - reciverCommision;
-        const reciverAmount= amount + reciverCommision;
-
         const senderAccountInfo = await Accout_Role_Through.findOne({
             where:{
                 accNumber:data.senderAccount,
             }
         },{transaction:transaction});
 
-        if(senderAccountInfo.dailyLimit != TranVAR.TV.dailyLimit && senderAccountInfo.remainingLimit < amount){
+        if(senderAccountInfo.dailyLimit != TranVAR.TV.dailyLimit && senderAccountInfo.remainingLimit < data.actualAmount){
             throw new AppError([`Your Todays Limit excceded! you can transfer only ${senderAccountInfo.remainingLimit}tk for today.`],StatusCodes.BAD_REQUEST);
         }
 
@@ -57,36 +48,37 @@ class TransferRepository extends Crud{
                     },
                 },{transaction:transaction});
 
-                if(sender.balance < totalAmount){
+                if(sender.balance < data.userLose){
                     throw new AppError(['Insufficient Balance'],StatusCodes.BAD_REQUEST);
                 }
                 
                 await sender.decrement('balance',{
-                    by:totalAmount,
+                    by:data.userLose,
                 },{transaction:transaction});
 
                 await reciver.increment('balance',{
-                    by:reciverAmount,
+                    by:data.reciverGets,
                 },{transaction:transaction});
 
                 if(senderAccountInfo.dailyLimit != TranVAR.TV.dailyLimit)
                     await senderAccountInfo.decrement('remainingLimit',{
-                        by:amount,
+                        by:parseInt(data.actualAmount),
                     },{transaction:transaction});
 
-                if(data.transactionType !== Enums.TRANSACTION_TYPE.CASHIN)
+                if(data.LcashGets){
                     await Lcash.increment('balance',{
-                    by:LcashRevenue,
-                },{transaction:transaction});
-               
+                        by:data.LcashGets,
+                    },{transaction:transaction});
+                }
+
                 //taking some time for manual tesing with axios
                 for(let i=0; i<100000000; i++);
 
                 await transaction.commit();
 
                 const response = {reciverAccount:data.reciverAccount,
-                                    amount:amount,
-                                    charge:charge,
+                                    amount:data.actualAmount,
+                                    charge:data.charge,
                                 };
                 return response;
 

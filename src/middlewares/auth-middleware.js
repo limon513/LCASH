@@ -26,13 +26,26 @@ function verifyToken(req,res,next){
 async function isActive(req,res,next){
     const accNumber = req.body.accNumber;
     try {
-        const account = await AccountThroughRepo.getByAccount(accNumber);
-        if(!account){
+        const senderAccount = await AccountThroughRepo.getByAccount(accNumber);
+        if(!senderAccount){
             ErrorResponse.error = new AppError(['No active user found! Please verify your Account First.'],StatusCodes.NOT_FOUND);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
         }
-        if(account.accStatus !== Enums.ACC_STATUS.ACTIVE){
+        if(senderAccount.accStatus !== Enums.ACC_STATUS.ACTIVE){
             ErrorResponse.error = new AppError(['Your account is blocked due to security concern. Please contact hotline and verify.'],StatusCodes.UNAUTHORIZED);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        const reciverAccount = await AccountThroughRepo.getByAccount(req.body.reciverAccount);
+        if(!reciverAccount){
+            ErrorResponse.error = new AppError(['No active reciver found!'],StatusCodes.NOT_FOUND);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(reciverAccount.accStatus !== Enums.ACC_STATUS.ACTIVE){
+            ErrorResponse.error = new AppError(['reciver account is not active!'],StatusCodes.NOT_ACCEPTABLE);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(reciverAccount.accType !== Enums.ACC_TYPE.AGENT){
+            ErrorResponse.error = new AppError(['you can only cashout to agents!'],StatusCodes.NOT_ACCEPTABLE);
             return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
         }
         next();

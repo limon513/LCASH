@@ -1,6 +1,6 @@
 const serverConfig = require('../config/server-config');
 const TransferService = require('../services/transfer-service');
-const { ErrorResponse, SuccessResponse, Utility } = require('../utils/common');
+const { ErrorResponse, SuccessResponse, Utility, Enums } = require('../utils/common');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../utils/errors/app-error');
 
@@ -29,6 +29,7 @@ async function TransferMoney(req, res) {
             .json(SuccessResponse);
 
     } catch (error) {
+        console.log(error);
         if (error instanceof Error) {
             ErrorResponse.error = error;
             return res

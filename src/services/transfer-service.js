@@ -2,7 +2,7 @@ const {TransferRepository,SuspicionRepository,AccountRepository} = require('../r
 const AppError = require('../utils/errors/app-error');
 const {StatusCodes} = require('http-status-codes');
 const serverConfig = require('../config/server-config');
-const {Utility, Enums} = require('../utils/common');
+const {Utility, Enums, TranVAR} = require('../utils/common');
 const AccountService = require('./account-service');
 const SuspicionService = require('./suspicion-service');
 
@@ -10,11 +10,27 @@ const TransferRepo = new TransferRepository();
 const SuspicionRepo = new SuspicionRepository();
 const AccountRepo = new AccountRepository();
 
+async function cashOut(data){
+    let userLoseMoney = parseInt(data.amount);
+    data.actualAmount = userLoseMoney;
+    const charge = Utility.calculateChargesOnTransfer(data.transactionType,userLoseMoney);
+    data.charge = charge;
+    userLoseMoney += charge;
+    data.userLose = userLoseMoney;
+    const reciverGetsMoney = data.actualAmount + parseFloat((charge * TranVAR.TV.agenGetsOnCashOut).toFixed(2));
+    data.reciverGets = reciverGetsMoney;
+    const LcashGetsMoney = userLoseMoney - reciverGetsMoney;
+    data.LcashGets = LcashGetsMoney;
+
+    try {
+        return await TransferRepo.TransferMoney(data);
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function TransferMoney(data){
     try {
-        const transferType = await AccountService.getTransferType(data.senderAccount,data.reciverAccount);
-        data.transactionType = transferType;
-
         const account = await AccountRepo.getByAccount(data.senderAccount);
 
         if(!Utility.checkPIN(data.PIN,account.PIN)){
@@ -37,8 +53,26 @@ async function TransferMoney(data){
             throw new AppError(['You can not transfer to you!'],StatusCodes.BAD_REQUEST);
         }
 
-        const response = await TransferRepo.TransferMoney(data);
-        //console.log(response);
+        let response;
+
+        const transferType = data.transactionType;
+
+        if(transferType === Enums.TRANSACTION_TYPE.CASHOUT){
+            response = await cashOut(data);
+        }
+        
+        // if(transferType === Enums.TRANSACTION_TYPE.CASHIN){
+        //     response = await TransferService.cashIn(req.body);
+        // }
+
+        // if(transferType === Enums.TRANSACTION_TYPE.SENDMONEY){
+        //     response = await TransferService.sendMoney(req.body);
+        // }
+
+        // if(transferType === Enums.TRANSACTION_TYPE.PAYMENT){
+        //     response = await TransferService.payment(req.body);
+        // }
+
         let TransferResponse;
         if(response){
             data.status = Enums.TRANSACTION_STATUS.SUCCESSFUL;

@@ -13,7 +13,9 @@ router.post('/request',AuthenticationMiddleware.verifyToken,RequestMiddleware.va
 
 router.post('/request/resolve/:id',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,RequestMiddleware.validateResolveRequest,RequestController.resolveRequest);
 
-router.post('/transfer',AuthenticationMiddleware.verifyToken,TransferMiddleware.transferValidate,TransferController.TransferMoney);
+//router.post('/transfer',AuthenticationMiddleware.verifyToken,TransferMiddleware.transferValidate,TransferController.TransferMoney);
+
+router.post('/transfer/cashout',TransferMiddleware.transferValidate,AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.isActive,TransferController.TransferMoney);
 
 router.put('/unblock',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,AccountController.unblockAccount);
 
