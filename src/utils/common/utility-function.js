@@ -33,9 +33,9 @@ function checkPIN(plainPIN,encryptPIN){
     }
 }
 
-function createToken(payload){
+function createToken(payload,expiry){
     try {
-        return jwt.sign(payload,serverConfig.JWTSECRET,{expiresIn:serverConfig.JWTEXPIRY});
+        return jwt.sign(payload,serverConfig.JWTSECRET,{expiresIn:expiry});
     } catch (error) {
         console.log(error);
         throw new AppError(['Server side problem,please retry sometime later.'],StatusCodes.INTERNAL_SERVER_ERROR);
@@ -85,6 +85,8 @@ function sortData(sortBy,order,data){
         return b[sortBy] -a[sortBy];
     })
 }
+
+
 
 
 module.exports = {

@@ -13,7 +13,7 @@ async function transferValidate(req,res,next){
         ErrorResponse.error = new AppError(['Empty Reciver Account Number!'],StatusCodes.BAD_REQUEST);
         return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
-    if(!req.body.PIN){
+    if(!req.body.PIN && !req.body.senderAccount){
         ErrorResponse.error = new AppError(['Six degit PIN required!'],StatusCodes.BAD_REQUEST);
         return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }

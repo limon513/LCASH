@@ -89,7 +89,7 @@ async function TransferMoney(data){
     try {
         const account = await AccountRepo.getByAccount(data.senderAccount);
 
-        if(!Utility.checkPIN(data.PIN,account.PIN)){
+        if(data.PIN && !Utility.checkPIN(data.PIN,account.PIN)){
             const suspicionResponse = await SuspicionService.create({
                 accNumber:data.accNumber,
                 type:Enums.SUSPICION.PIN});

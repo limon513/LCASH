@@ -7,7 +7,7 @@ const AppError = require('../utils/errors/app-error');
 const IdempotencyRedis = {};
 
 async function TransferMoney(req, res) {
-    req.body.senderAccount = req.body.accNumber;
+    if(!req.headers['x-api-key']) req.body.senderAccount = req.body.accNumber;
     try {
         const idempotencyKey = req.headers['x-idempotency-key'];
 

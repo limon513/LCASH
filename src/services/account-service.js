@@ -47,7 +47,7 @@ async function signIn(data){
             }
             throw new AppError(['Incorrect PIN!'],StatusCodes.BAD_REQUEST);
         }
-        const jwt = Utility.createToken({accNumber:data.accNumber});
+        const jwt = Utility.createToken({accNumber:data.accNumber},serverConfig.JWTEXPIRY);
         data.type = Enums.SUSPICION.LOGIN;
         const clear = await SuspicionService.clearSuspicion(data);
         const response = {

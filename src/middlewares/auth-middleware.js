@@ -111,9 +111,34 @@ async function authSuperAdmin(req,res,next){
 }
 
 
+async function authMarchent(req,res,next){
+    const accNumber = req.body.accNumber;
+    try {
+        const marchent = await AccountThroughRepo.getByAccount(accNumber);
+        if(!marchent){
+            ErrorResponse.error = new AppError(['No active marchent found!'],StatusCodes.NOT_FOUND);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(marchent.accStatus !== Enums.ACC_STATUS.ACTIVE){
+            ErrorResponse.error = new AppError(['You are not Authorized for this!'],StatusCodes.NOT_FOUND);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        if(marchent.accType !== Enums.ACC_TYPE.MARCHENT){
+            ErrorResponse.error = new AppError(['You are not Authorized for this!'],StatusCodes.UNAUTHORIZED);
+            return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+        }
+        next();
+    } catch (error) {
+        if(error instanceof Error) ErrorResponse.error = error;
+        else ErrorResponse.error = new AppError(['Service Unavailable!'],StatusCodes.INTERNAL_SERVER_ERROR);
+        return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+    }   
+}
+
 
 module.exports = {
     verifyToken,
     authSuperAdmin,
+    authMarchent,
     isActive,
 }

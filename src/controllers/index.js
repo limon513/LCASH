@@ -4,4 +4,5 @@ module.exports = {
     SuspicionController: require('./suspicion-controller'),
     RequestController: require('./request-controller'),
     TransferController: require('./transfer-controller'),
+    PaymentGateWayController: require('./payment-gateway-controller'),
 };

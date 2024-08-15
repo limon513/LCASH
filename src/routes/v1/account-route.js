@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {AccountMiddleware,AuthenticationMiddleware,RequestMiddleware,TransferMiddleware} = require('../../middlewares');
-const {AccountController,SuspicionController, RequestController, TransferController} = require('../../controllers')
+const {AccountController,SuspicionController, RequestController, TransferController, PaymentGateWayController} = require('../../controllers')
 
 router.post('/signup',AccountMiddleware.userValidate,AccountController.create);
 
@@ -36,6 +36,9 @@ router.post('/transfer/payment',
     AuthenticationMiddleware.verifyToken,
     AuthenticationMiddleware.isActive,
     TransferController.TransferMoney);
+
+
+router.post('/getApiKey',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authMarchent,PaymentGateWayController.getApiKey);
 
 router.put('/unblock',AuthenticationMiddleware.verifyToken,AuthenticationMiddleware.authSuperAdmin,AccountController.unblockAccount);
 

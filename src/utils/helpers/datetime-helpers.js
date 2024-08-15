@@ -1,7 +1,9 @@
-function compareTime(timeString1, timeString2) {
-    let dateTime1 = new Date(timeString1);
-    let dateTime2 = new Date(timeString2);
-    return dateTime1.getTime() > dateTime2.getTime();
+function compareTime(timeString1) {
+    let date1 = new Date(timeString1);
+    let date2 = Date.now();
+    const differenceInMilliseconds = Math.abs(date2 - date1);
+    const differenceInMinutes = differenceInMilliseconds / (1000 * 60);
+    return differenceInMinutes < 5;
 }
 
 module.exports = {
