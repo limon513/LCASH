@@ -22,6 +22,7 @@ function userValidate(req,res,next){
     }
     req.body = {
         userName:req.body.userName,
+        useEmail:req.body.useEmail,
         accNumber:req.body.accNumber.trim(),
         PIN:req.body.PIN.trim(),
     };
