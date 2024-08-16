@@ -5,4 +5,5 @@ module.exports = {
     TransferService: require('./transfer-service'),
     PaymentGateWayService: require('./payment-gateway-service'),
     VerificationService: require('./verification-service'),
+    EmailService: require('./mail-service'),
 }

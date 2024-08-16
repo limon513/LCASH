@@ -29,10 +29,17 @@ const TRANSACTION_STATUS = {
     FAILED: 'failed',
 }
 
+const NOTIFIED_STATUS = {
+    SUCCESSFUL: 'successful',
+    FAILED: 'failed',
+    PENDING: 'pending',
+}
+
 module.exports = {
     ACC_TYPE,
     ACC_STATUS,
     SUSPICION,
     TRANSACTION_TYPE,
     TRANSACTION_STATUS,
+    NOTIFIED_STATUS,
 }

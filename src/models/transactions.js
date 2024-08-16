@@ -2,7 +2,9 @@
 const {
   Model
 } = require('sequelize');
-const {Enums} = require('../utils/common');
+const {Enums, Utility} = require('../utils/common');
+const EmailService  = require('../services/mail-service');
+const serverConfig = require('../config/server-config');
 module.exports = (sequelize, DataTypes) => {
   class Transfer extends Model {
     /**
@@ -60,6 +62,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Transfer',
+  });
+
+  Transfer.addHook('afterCreate', async(transfer,options)=>{
+    const text = Utility.createResponseForTransfer(transfer.status,transfer.transactionId,transfer.transactionType,transfer.amount,transfer.charges,transfer.reciverAccount);
+    await EmailService.sendEmail(serverConfig.GMAILMAIL,'sabur.islam@sec.ac.bd','after transaction',text);
   });
   return Transfer;
 };

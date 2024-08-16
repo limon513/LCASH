@@ -17,4 +17,6 @@ module.exports = {
     REJECTREQUEST: process.env.REJECT_ACTIVE_REQUEST,
     PINATTEMPTMESSAGE: process.env.SUSPICION_PIN_MESSAGE,
     AFTERCODESENT: process.env.AFTERCODESENT,
+    GMAILMAIL: process.env.GMAIL_EMAIL,
+    GMAILPASS: process.env.GMAIL_PASS,
 }
