@@ -68,6 +68,7 @@ class AccountRepository extends Crud{
             });
             return response;
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }

@@ -25,6 +25,21 @@ async function singIn(req,res){
     }
 }
 
+async function updateUser(req,res){
+    const data = {};
+    if(req.body.userName) data.userName = req.body.userName;
+    if(req.body.useEmail) data.useEmail = req.body.useEmail;
+    try {
+        const response = await AccountService.updateUser(req.body.accNumber,data);
+        SuccessResponse.data = response;
+        return res.status(StatusCodes.ACCEPTED).json(SuccessResponse);
+    } catch (error) {
+        console.log(error);
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 async function unblockAccount(req,res){
     try {
         const response = await AccountService.unblockAccount(req.body.number);
@@ -40,4 +55,5 @@ module.exports = {
     create,
     singIn,
     unblockAccount,
+    updateUser,
 }

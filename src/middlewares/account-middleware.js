@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const { ErrorResponse, Utility } = require("../utils/common");
+const { ErrorResponse, Utility, Enums } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
 const {SuspicionService} = require('../services');
 
@@ -44,8 +44,33 @@ function signInValidate(req,res,next){
     next();
 }
 
+async function userSuspicionValidate(req,res,next){
+    try {
+        const response = await SuspicionService.checkForSuspicion(req.body.accNumber,Enums.SUSPICION.LOGIN||Enums.SUSPICION.PIN);
+        if(response){
+            ErrorResponse.error = new AppError(['Your activity is suspicious, Please verify first.!'],StatusCodes.BAD_REQUEST);
+            return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+        }
+        next();
+    } catch (error) {
+        if(error instanceof Error) ErrorResponse.error = error;
+        else ErrorResponse.error = new AppError(['Service unavaiable'],StatusCodes.INTERNAL_SERVER_ERROR);
+        return res.status(ErrorResponse.error.statusCode).json(ErrorResponse);
+    }
+}
+
+function userUpdateValidate(req,res,next){
+    if(!req.body.userName && !req.body.useEmail){
+        ErrorResponse.error = new AppError(['Empty Fields!'],StatusCodes.BAD_REQUEST);
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+    next();
+}
+
 
 module.exports = {
     userValidate,
     signInValidate,
+    userUpdateValidate,
+    userSuspicionValidate,
 }

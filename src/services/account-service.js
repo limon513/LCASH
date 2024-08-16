@@ -61,6 +61,16 @@ async function signIn(data){
     }
 }
 
+async function updateUser(accNumber,data){
+    try {
+        const response = await AccountRepo.updateUser(accNumber,data);
+        return response;
+    } catch (error) {
+        console.log(error);
+        throw new AppError(['Service Unavailable'],StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 async function getTransferType(senderAccount,reciverAccount){
     try {
         const sender = await AccountThroughRepo.getByAccount(senderAccount);
@@ -133,4 +143,5 @@ module.exports = {
     updateAccount,
     getAccountDetails,
     unblockAccount,
+    updateUser,
 }
