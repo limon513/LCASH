@@ -14,7 +14,6 @@ module.exports = {
       },
       useEmail:{
         type:Sequelize.STRING,
-        unique:true,
         allowNull:true,
         validate:{
           isEmail:true,

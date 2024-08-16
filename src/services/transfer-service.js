@@ -133,6 +133,10 @@ async function TransferMoney(data){
         if(response){
             data.status = Enums.TRANSACTION_STATUS.SUCCESSFUL;
             data.charges = response.charge;
+            const senderDetails = await AccountRepo.getByAccount(data.senderAccount);
+            const reciverDetails = await AccountRepo.getByAccount(data.reciverAccount);
+            data.senderEmail = senderDetails.useEmail;
+            data.reciverEmail = reciverDetails.useEmail;
             const transgerLog = await TransferRepo.logTransfer(data);
             TransferResponse = Utility.createResponseForTransfer(transgerLog.status,transgerLog.transactionId,transferType,response.amount,response.charge,response.reciverAccount);
         }else{
