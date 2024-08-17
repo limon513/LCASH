@@ -59,14 +59,25 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.ENUM(Enums.TRANSACTION_STATUS.SUCCESSFUL,Enums.TRANSACTION_STATUS.FAILED),
       allowNull:false,
     },
+    senderEmail:{
+      type:DataTypes.STRING,
+    },
+    reciverEmail:{
+      type:DataTypes.STRING,
+    },
+    notified:{
+      type:DataTypes.ENUM(Enums.NOTIFIED_STATUS.SUCCESSFUL,Enums.NOTIFIED_STATUS.SUCCESSFUL,Enums.NOTIFIED_STATUS.PENDING),
+      defaultValue:Enums.NOTIFIED_STATUS.PENDING,
+      allowNull:false,
+    }
   }, {
     sequelize,
     modelName: 'Transfer',
   });
 
-  Transfer.addHook('afterCreate', async(transfer,options)=>{
-    const text = Utility.createResponseForTransfer(transfer.status,transfer.transactionId,transfer.transactionType,transfer.amount,transfer.charges,transfer.reciverAccount);
-    await EmailService.sendEmail(serverConfig.GMAILMAIL,'sabur.islam@sec.ac.bd','after transaction',text);
-  });
+  // Transfer.addHook('afterCreate', async(transfer,options)=>{
+  //   const text = Utility.createResponseForTransfer(transfer.status,transfer.transactionId,transfer.transactionType,transfer.amount,transfer.charges,transfer.reciverAccount);
+  //   await EmailService.sendEmail(serverConfig.GMAILMAIL,'sabur.islam@sec.ac.bd','after transaction',text);
+  // });
   return Transfer;
 };

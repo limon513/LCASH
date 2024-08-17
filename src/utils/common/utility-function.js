@@ -74,6 +74,10 @@ function createResponseForTransfer(status,transactionId,transferType,amount,char
     return `${transferType} to ${reciverAccount} failed. TRANSACTION ID ${transactionId}`;
 }
 
+function createResponseForDeposite(transactionId,amount,senderAccount){
+    return `Transaction ID:${transactionId} Account creadited with ${amount}tk from ${senderAccount}`;
+}
+
 function sortData(sortBy,order,data){
     if(order === 'asc'){
         data.sort((a,b) =>{
@@ -98,5 +102,6 @@ module.exports = {
     generateVcode,
     calculateChargesOnTransfer,
     createResponseForTransfer,
+    createResponseForDeposite,
     sortData,
 }

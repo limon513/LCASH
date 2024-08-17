@@ -72,7 +72,7 @@ class TransferRepository extends Crud{
                 }
 
                 //taking some time for manual tesing with axios
-                for(let i=0; i<100000000; i++);
+                //for(let i=0; i<100000000; i++);
 
                 await transaction.commit();
 
@@ -114,6 +114,33 @@ class TransferRepository extends Crud{
                 },
             });
             return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getPendingNotifiedTransactions(notified){
+        try {
+            const transfers = await Transfer.findAll({
+                where:{
+                    notified:notified,
+                },
+                raw:true,
+            });
+            return transfers;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resolveTransferOnNotification(id,data){
+        try {
+            const resolve = await Transfer.update(data,{
+                where:{
+                    transactionId:id,
+                },
+            });
+            return true;
         } catch (error) {
             throw error;
         }

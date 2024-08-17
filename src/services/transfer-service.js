@@ -165,7 +165,27 @@ async function getTransactions(data){
     }
 }
 
+async function getPendingNotifiedTransactions(notified){
+    try {
+        const transfers = await TransferRepo.getPendingNotifiedTransactions(notified);
+        return transfers;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function resolveTransferOnNotification(id){
+    try {
+        const resolve = await TransferRepo.resolveTransferOnNotification(id,{notified:Enums.NOTIFIED_STATUS.SUCCESSFUL});
+        return resolve;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     TransferMoney,
     getTransactions,
+    getPendingNotifiedTransactions,
+    resolveTransferOnNotification,
 }
