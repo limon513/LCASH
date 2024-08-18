@@ -107,7 +107,7 @@ class TransferRepository extends Crud{
     async getTransactions(data){
         try {
             const response = await Transfer.findAll({
-                attributes:{ exclude : ['senderAccount','updatedAt','status'] },
+                attributes:{ exclude : ['senderAccount','updatedAt','status','notified','senderEmail','reciverEmail'] },
                 where:{
                     senderAccount:data.accNumber,
                     status:Enums.TRANSACTION_STATUS.SUCCESSFUL,

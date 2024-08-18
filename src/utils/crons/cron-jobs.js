@@ -60,41 +60,6 @@ function scheduleCrons() {
             console.log(error);
         }
     });
-
-    // cron.schedule('*/3 * * * *', async () => {
-    //     try {
-    //         const transfers = await TransferService.getPendingNotifiedTransactions(Enums.NOTIFIED_STATUS.PENDING);
-    //         console.log(transfers);
-    //         transfers.forEach(async (transfer)=>{
-    //             const message = Utility.createResponseForTransfer(transfer.status,
-    //                 transfer.transactionId,
-    //                 transfer.transactionType,
-    //                 transfer.amount,
-    //                 transfer.charges,
-    //                 transfer.reciverAccount);
-    //             if(transfer.senderEmail){
-    //                 await EmailService.sendEmail(serverConfig.GMAILMAIL,
-    //                     transfer.senderEmail,
-    //                     'Transaction Info',
-    //                     message);
-    //             }
-
-    //             if(transfer.status === Enums.TRANSACTION_STATUS.SUCCESSFUL && transfer.reciverEmail){
-    //                 await EmailService.sendEmail(serverConfig.GMAILMAIL,
-    //                     transfer.reciverEmail,
-    //                     'Transaction Info',
-    //                     Utility.createResponseForDeposite(transfer.transactionId,transfer.amount,transfer.senderAccount));
-    //             }
-
-    //             await TransferService.resolveTransferOnNotification(transfer.transactionId);
-    //         });
-    //     } catch (error) {   
-    //         console.log(error);
-    //     }
-    // });
-
-
-
 }
 
 module.exports = {
